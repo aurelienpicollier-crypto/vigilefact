@@ -587,11 +587,23 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
 
 <script>
 /* ═══════════════════════════════════
-   GEMINI API — proxy via /api/gemini (clé côté serveur)
+   GEMINI API
 ═══════════════════════════════════ */
 const GEMINI_MODEL = 'gemini-2.5-flash';
+const GEMINI_BASE  = 'https://generativelanguage.googleapis.com/v1beta/models';
+let _gKey = null;
+
+async function getGeminiKey() {
+  if (_gKey) return _gKey;
+  const r = await fetch('/api/key');
+  const d = await r.json();
+  if (!d.k) throw new Error('Service temporairement indisponible.');
+  _gKey = d.k;
+  return _gKey;
+}
 
 async function callGemini({ prompt, pdfBase64 = null, useSearch = false }) {
+  const key = await getGeminiKey();
   const parts = [];
   if (pdfBase64) parts.push({ inlineData: { mimeType: 'application/pdf', data: pdfBase64 } });
   parts.push({ text: prompt });
@@ -599,11 +611,10 @@ async function callGemini({ prompt, pdfBase64 = null, useSearch = false }) {
   const body = { contents: [{ parts }], generationConfig: { temperature: 0.1 } };
   if (useSearch) body.tools = [{ google_search: {} }];
 
-  const resp = await fetch('/api/gemini', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: GEMINI_MODEL, body })
-  });
+  const resp = await fetch(
+    `${GEMINI_BASE}/${GEMINI_MODEL}:generateContent?key=${key}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+  );
   const data = await resp.json();
   if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
   if (!data.candidates?.[0]) throw new Error('Réponse vide de Gemini');
