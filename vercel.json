@@ -2,7 +2,6 @@
   "version": 2,
   "buildCommand": null,
   "outputDirectory": ".",
-  "toolbar": false,
   "headers": [
     {
       "source": "/(.*)",
