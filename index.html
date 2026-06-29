@@ -678,19 +678,26 @@ document.getElementById('btn-veille').addEventListener('click', async () => {
     : '1er janvier 2025';
 
   try {
-    const prompt = `Tu es un expert en facturation électronique française. Effectue une recherche Google sur les actualités publiées DEPUIS LE ${dateDepuisFr} concernant la réforme de la facturation électronique en France (RFE, e-invoicing). Ne retourne PAS de nouvelles antérieures à cette date.
+    const prompt = `Tu es chargé d'effectuer une veille réglementaire précise sur la réforme française de la facturation électronique (RFE).
 
-Recherche les nouvelles provenant de :
-- DGFiP (impots.gouv.fr) : nouvelles règles, mise à jour du cahier des charges, nouvelles PA immatriculées ou retirées
-- BOFiP : nouvelles instructions fiscales (articles 289 bis, 290 CGI)
-- AFNOR : évolutions normes XP Z12-012, Z12-013, Z12-014 (Factur-X)
-- AIFE / Chorus Pro : actualités PPF
-- The Invoicing Hub : publications, benchmarks, analyses
-- Billentis : rapports et veille internationale
-- Éditeurs PA : nouvelles immatriculations, fonctionnalités
+Effectue des recherches Google ciblées pour trouver uniquement des événements CONCRETS publiés APRÈS LE ${dateDepuisFr}. Ignore tout ce qui est antérieur à cette date.
 
-IMPORTANT : Réponds UNIQUEMENT avec le JSON ci-dessous, sans aucun texte avant ou après, sans backticks, sans markdown :
-{"lastUpdated":"${today}","summary":"synthèse factuelle en une phrase","items":[{"source":"NOM","color":"#HEX","date":"période","title":"titre court précis","summary":"résumé factuel 2-3 phrases"}]}`;
+Recherches à effectuer :
+1. site:impots.gouv.fr "facturation électronique" after:${dateDepuis}
+2. site:bofip.impots.gouv.fr "289 bis" OR "290 CGI" after:${dateDepuis}
+3. "Plateforme Agréée" immatriculée OR retirée DGFiP ${dateDepuis.slice(0,4)}
+4. Factur-X OR "XP Z12" AFNOR after:${dateDepuis}
+5. site:theinvoicinghub.com after:${dateDepuis}
+6. "e-invoicing" France after:${dateDepuis}
+
+Pour chaque actualité trouvée, vérifie que la date est POSTÉRIEURE au ${dateDepuisFr}. Si tu ne trouves rien de concret après cette date sur une source, ne l'invente pas.
+
+Chaque item doit contenir une information PRÉCISE et VÉRIFIABLE : nom d'une PA immatriculée, numéro d'un article BOFiP, version d'une norme, date d'une publication réelle. Pas de généralités sur le calendrier de la réforme.
+
+Couleurs par source : DGFiP=#003366, BOFiP=#006633, AFNOR=#FF6600, AIFE=#0099CC, TheInvoicingHub=#663399, Billentis=#CC3300, PA éditeurs=#339966.
+
+IMPORTANT — réponds UNIQUEMENT avec ce JSON, sans texte avant ni après, sans backticks :
+{"lastUpdated":"${today}","summary":"synthèse factuelle en une phrase des nouveautés trouvées depuis le ${dateDepuisFr}","items":[{"source":"NOM","color":"#HEX","date":"JJ/MM/AAAA ou mois AAAA","title":"titre précis avec faits concrets","summary":"2-3 phrases avec données vérifiables : noms, numéros, dates exactes"}]}`;
 
     const text = await callGemini({ prompt, useSearch: true });
     let p;
@@ -1025,16 +1032,28 @@ document.getElementById('btn-specs').addEventListener('click', async () => {
   out.innerHTML = '<div class="loading-row"><div class="spinner"></div>Recherche des dernières spécifications sur impots.gouv.fr…</div>';
 
   try {
-    const prompt = `Tu es un expert en facturation électronique française. Recherche les dernières versions des spécifications externes B2B publiées par la DGFiP sur impots.gouv.fr/specifications-externes-b2b.
+    const today2 = new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+    const prompt = `Effectue une recherche Google sur la page officielle DGFiP : https://www.impots.gouv.fr/specifications-externes-b2b
 
-Pour chaque document de spécification trouvé (cahier des charges, spécifications B2B, B2G, etc.) :
-- Indique la version actuelle et sa date de publication
-- Indique la version précédente si connue
-- Résume les principaux changements apportés par la version actuelle (3-5 points clés)
-- Indique si la version est stable ou en consultation publique
+Cette page publie les spécifications techniques pour la facturation électronique B2B en France. Je veux connaître les VERSIONS LES PLUS RÉCENTES disponibles aujourd'hui (${today2}).
 
-IMPORTANT : Réponds UNIQUEMENT avec le JSON ci-dessous, sans aucun texte avant ou après, sans backticks :
-{"lastUpdated":"DATE_AUJOURD_HUI","docs":[{"title":"Nom du document","version":"vX.X","date":"date publication","prevVersion":"vX.X précédente ou null","status":"stable|consultation","changes":["changement 1","changement 2","changement 3"]}]}`;
+Recherches à effectuer dans l'ordre :
+1. site:impots.gouv.fr "specifications-externes-b2b" 2025 OR 2026
+2. "spécifications externes" "facturation électronique" B2B DGFiP version 2025 OR 2026
+3. impots.gouv.fr "cahier des charges" OR "spécifications externes" facturation électronique filetype:pdf 2025 OR 2026
+
+Pour CHAQUE document trouvé publié en 2025 ou 2026 :
+- Nom exact du document tel qu'il apparaît sur la page DGFiP
+- Numéro de version précis (ex: v2.3, v3.0...)
+- Date de publication exacte (jour/mois/année si disponible)
+- La version précédente que ce document remplace (si trouvée)
+- 3 à 5 changements concrets et précis par rapport à la version précédente (pas de généralités)
+- Statut : "publié" (officiel) ou "consultation" (en cours de consultation publique)
+
+NE RETOURNE PAS de documents dont la date est antérieure à janvier 2025. Si la version la plus récente trouvée date de 2024, indique-le explicitement dans le titre et précise qu'aucune version 2025/2026 n'a été trouvée.
+
+IMPORTANT — réponds UNIQUEMENT avec ce JSON, sans texte ni backticks :
+{"lastUpdated":"${today2}","docs":[{"title":"Nom exact du document","version":"vX.X","date":"JJ/MM/AAAA","prevVersion":"vX.X ou null","status":"publié|consultation","changes":["changement concret 1","changement concret 2","changement concret 3"]}]}`;
 
     const text = await callGemini({ prompt, useSearch: true });
     let p;
