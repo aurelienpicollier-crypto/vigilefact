@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Vigil'E-Fact — Veille & Conformité RFE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --or:#FF6B2B;--or-dk:#E55A1C;--or-lt:#FF8C5A;--or-bg:#FFF5F0;--or-bd:#FFCDB8;
+  --bk:#1A1A1A;--bk2:#3D3D3D;--bk3:#6B6B6B;--wh:#FFFFFF;--wh2:#F9F9F7;--bd:#E8E8E4;
+  --ok:#1E7A4A;--ok-bg:#F0FFF7;--ko:#C53030;--ko-bg:#FFF5F5;--ko-bd:#FECACA;
+  --wa:#B45309;--wa-bg:#FFFBEB;
+  --sh:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  --shm:0 4px 12px rgba(0,0,0,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:var(--wh2);color:var(--bk);min-height:100vh;font-size:14px}
+
+
+.setup-feat{padding:4px 10px;border-radius:4px;font-size:11px;background:var(--or-bg);color:var(--or-dk);border:1px solid var(--or-bd)}
+
+/* ── HEADER ── */
+header{background:var(--bk);border-bottom:3px solid var(--or)}
+.h-top{padding:20px 40px 16px;display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.h-eye{font-size:10px;font-weight:600;letter-spacing:.14em;color:var(--or);text-transform:uppercase;margin-bottom:3px}
+.h-name{font-family:'Playfair Display',serif;font-size:24px;color:var(--wh);line-height:1.15}
+.h-sub{font-size:11.5px;color:#888;margin-top:2px}
+.h-badges{display:flex;flex-direction:column;align-items:flex-end;gap:5px}
+.badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10.5px;font-weight:600}
+.b-rfe{background:rgba(255,107,43,.18);border:1px solid rgba(255,107,43,.35);color:#FF9A6C}
+.b-dt{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#888}
+
+/* ── NAV ── */
+nav{background:var(--bk);padding:0 36px;display:flex;overflow-x:auto;border-top:1px solid rgba(255,255,255,.07)}
+.tab{padding:12px 18px;border:none;background:transparent;color:#888;font-family:'Inter',sans-serif;font-size:12.5px;font-weight:500;cursor:pointer;border-bottom:3px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0;margin-bottom:-3px}
+.tab:hover{color:#bbb}
+.tab.on{color:var(--wh);border-bottom-color:var(--or)}
+
+/* ── MAIN ── */
+main{max-width:1080px;margin:0 auto;padding:26px 18px 48px}
+.sec{display:none}
+.sec.on{display:block}
+
+/* ── CARDS ── */
+.card{background:var(--wh);border-radius:8px;box-shadow:var(--sh);border:1px solid var(--bd);overflow:hidden}
+.c-head{padding:16px 20px 13px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between}
+.c-ttl{font-size:13.5px;font-weight:600;color:var(--bk)}
+.c-body{padding:20px}
+.s-head{margin-bottom:20px}
+.s-title{font-family:'Playfair Display',serif;font-size:19px;color:var(--bk);margin-bottom:3px}
+.s-desc{font-size:12.5px;color:var(--bk3)}
+
+/* ── VEILLE ── */
+.v-hero{background:var(--bk);border-radius:8px;padding:32px;margin-bottom:20px;display:flex;align-items:center;justify-content:space-between;gap:28px;border:1px solid #2A2A2A;flex-wrap:wrap}
+.v-txt h2{font-family:'Playfair Display',serif;font-size:19px;color:var(--wh);margin-bottom:5px}
+.v-txt p{font-size:12.5px;color:#888;max-width:360px;line-height:1.65}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.chip{padding:3px 8px;border-radius:4px;font-size:10.5px;font-weight:500;background:rgba(255,107,43,.12);color:var(--or-lt);border:1px solid rgba(255,107,43,.2)}
+.radar-wrap{display:flex;flex-direction:column;align-items:center;gap:8px;flex-shrink:0}
+#btn-veille{width:138px;height:138px;border-radius:50%;border:2.5px solid var(--or);background:rgba(255,107,43,.08);color:var(--or);font-family:'Playfair Display',serif;font-size:15px;font-weight:600;cursor:pointer;transition:all .22s;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;text-align:center;line-height:1.25}
+#btn-veille .ico{font-size:24px;line-height:1}
+#btn-veille:hover:not(:disabled){background:rgba(255,107,43,.16);transform:scale(1.04);box-shadow:0 0 24px rgba(255,107,43,.2)}
+#btn-veille:disabled{opacity:.5;cursor:not-allowed}
+#btn-veille.scanning{animation:rpulse 1.3s ease-in-out infinite}
+@keyframes rpulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,43,.3)}50%{box-shadow:0 0 0 12px rgba(255,107,43,0)}}
+.last-chk{font-size:10.5px;color:#666;text-align:center}
+.spinner{width:15px;height:15px;border:2px solid var(--bd);border-top-color:var(--or);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-row{display:flex;align-items:center;gap:9px;padding:16px 20px;color:var(--bk3);font-size:12.5px}
+.news-item{padding:16px 20px;border-bottom:1px solid var(--bd)}
+.news-item:last-child{border-bottom:none}
+.n-meta{display:flex;align-items:center;gap:8px;margin-bottom:5px}
+.n-badge{padding:2px 7px;border-radius:3px;font-size:9.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.n-date{font-size:10.5px;color:var(--bk3)}
+.n-title{font-size:13px;font-weight:600;color:var(--bk);margin-bottom:4px}
+.n-sum{font-size:12px;color:var(--bk2);line-height:1.65}
+.v-intro{padding:13px 20px;background:var(--wh2);border-bottom:1px solid var(--bd);font-size:12px;color:var(--bk3);font-style:italic}
+
+/* ── TEST ── */
+.test-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+@media(max-width:768px){.test-grid{grid-template-columns:1fr}}
+.drop-zone{border:2px dashed var(--or-bd);border-radius:8px;padding:28px 20px;text-align:center;background:var(--or-bg);cursor:pointer;transition:all .2s;position:relative;margin-bottom:10px}
+.drop-zone:hover,.drop-zone.drag-over{border-color:var(--or);background:rgba(255,107,43,.07)}
+.drop-zone input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.dz-ico{font-size:32px;margin-bottom:8px}
+.dz-txt{font-size:13px;font-weight:500;color:var(--or)}
+.dz-sub{font-size:11px;color:var(--bk3);margin-top:4px}
+.dz-file{display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(255,107,43,.06);border-radius:6px;border:1px solid var(--or-bd);font-size:12.5px;color:var(--bk2);margin-bottom:10px}
+.dz-remove{margin-left:auto;background:none;border:none;color:var(--ko);cursor:pointer;font-size:16px;line-height:1}
+textarea{width:100%;min-height:200px;border:2px solid var(--bd);border-radius:6px;padding:13px;font-family:'Inter',sans-serif;font-size:12.5px;color:var(--bk);resize:vertical;outline:none;transition:border-color .18s;line-height:1.6;background:var(--wh2)}
+textarea:focus{border-color:var(--or);background:var(--wh)}
+textarea::placeholder{color:#AAAAAA}
+.hint{font-size:11px;color:var(--bk3);margin-top:6px;line-height:1.55}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:10px 20px;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;transition:all .16s;width:100%;margin-top:10px}
+.btn-or{background:var(--or);color:var(--wh)}
+.btn-or:hover:not(:disabled){background:var(--or-dk)}
+.btn-bk{background:var(--bk);color:var(--wh)}
+.btn-bk:hover:not(:disabled){background:#333}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+
+/* ── GAUGE ── */
+.gauge-wrap{display:flex;flex-direction:column;align-items:center;padding:20px 20px 14px;background:linear-gradient(180deg,var(--wh2),var(--wh));border-bottom:1px solid var(--bd)}
+.gauge-svg{width:120px;height:120px}
+.g-track{fill:none;stroke:var(--bd);stroke-width:10}
+.g-fill{fill:none;stroke:var(--ok);stroke-width:10;stroke-linecap:round;stroke-dasharray:339.29;stroke-dashoffset:339.29;transform:rotate(-90deg);transform-origin:center;transition:stroke-dashoffset .85s cubic-bezier(.4,0,.2,1),stroke .3s}
+.g-sc{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;fill:var(--bk);text-anchor:middle;dominant-baseline:central}
+.g-label{font-size:10.5px;color:var(--bk3);margin-top:5px}
+.g-status{margin-top:5px;font-size:12.5px;font-weight:600}
+.f-row{display:grid;grid-template-columns:20px 1fr 22px;gap:8px;align-items:start;padding:9px 16px;border-bottom:1px solid #F5F5F3;font-size:12px}
+.f-row:last-child{border-bottom:none}
+.f-num{color:var(--bk3);font-size:10px;padding-top:1px}
+.f-name{font-weight:500;color:var(--bk);line-height:1.4}
+.f-note{font-size:10.5px;color:var(--bk3);margin-top:2px}
+.f-dot{display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;font-size:11px;flex-shrink:0;font-weight:700}
+.d-ok{background:#DCFCE7;color:#166534}.d-ko{background:#FEE2E2;color:#991B1B}
+.d-pt{background:#FEF9C3;color:#854D0E}.d-na{background:#F3F4F6;color:#6B7280}.d-pd{background:#F3F4F6;color:#9CA3AF}
+.cond{font-size:10px;color:var(--bk3)}
+.beyond-box{padding:16px 20px;background:#FAFAFA;border-top:2px solid var(--or)}
+.beyond-title{font-size:12px;font-weight:700;color:var(--bk);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px}
+.beyond-item{display:flex;gap:10px;font-size:12px;color:var(--bk2);padding:6px 0;border-bottom:1px solid var(--bd);line-height:1.5}
+.beyond-item:last-child{border-bottom:none}
+.beyond-ico{color:var(--or);flex-shrink:0;width:16px;text-align:center}
+.recs{border-top:1px solid var(--bd)}
+.recs-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--bk);padding:11px 16px 7px}
+.rec-row{display:flex;gap:9px;padding:7px 16px;font-size:12px;color:var(--bk2);border-top:1px solid #F5F5F3;line-height:1.55}
+.rec-ico{color:var(--wa);flex-shrink:0}
+.bench-bar{display:flex;gap:10px;margin:18px 0 4px;flex-wrap:wrap}
+.bench-pill{display:inline-flex;align-items:center;gap:7px;padding:8px 14px;border-radius:6px;border:1.5px solid var(--or-bd);background:var(--or-bg);color:var(--bk2);text-decoration:none;font-size:12px;font-weight:500;transition:all .16s}
+.bench-pill:hover{border-color:var(--or);color:var(--or-dk)}
+
+/* ── CAS D'USAGE ── */
+.quiz-wrap{max-width:700px;margin:0 auto}
+.quiz-step{display:none}
+.quiz-step.on{display:block}
+.q-card{background:var(--wh);border:1px solid var(--bd);border-radius:10px;padding:28px;box-shadow:var(--sh)}
+.q-num{font-size:10px;font-weight:700;letter-spacing:.1em;color:var(--or);text-transform:uppercase;margin-bottom:6px}
+.q-text{font-family:'Playfair Display',serif;font-size:18px;color:var(--bk);margin-bottom:18px;line-height:1.4}
+.q-options{display:flex;flex-direction:column;gap:8px}
+.q-opt{padding:12px 16px;border:2px solid var(--bd);border-radius:7px;cursor:pointer;transition:all .15s;font-size:13px;color:var(--bk2);background:var(--wh);display:flex;align-items:center;gap:10px}
+.q-opt:hover{border-color:var(--or-bd);background:var(--or-bg)}
+.q-opt.sel{border-color:var(--or);background:var(--or-bg);color:var(--bk);font-weight:500}
+.q-opt.sel .opt-ico{background:var(--or);color:var(--wh);border-color:var(--or)}
+.opt-ico{width:22px;height:22px;border-radius:50%;border:2px solid var(--bd);display:flex;align-items:center;justify-content:center;font-size:10px;flex-shrink:0;transition:all .15s}
+.q-multi-note{font-size:11px;color:var(--bk3);margin-bottom:12px;font-style:italic}
+.q-progress{display:flex;gap:5px;margin-bottom:16px}
+.q-dot{width:8px;height:8px;border-radius:50%;background:var(--bd);transition:background .2s}
+.q-dot.done{background:var(--or)}
+.q-nav{display:flex;justify-content:space-between;align-items:center;margin-top:18px;gap:10px}
+.btn-prev{padding:9px 18px;border:2px solid var(--bd);border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:500;cursor:pointer;background:var(--wh);color:var(--bk2);transition:all .15s;width:auto;margin-top:0}
+.btn-prev:hover{border-color:var(--bk3)}
+.btn-next{padding:9px 24px;border:none;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;cursor:pointer;background:var(--or);color:var(--wh);transition:all .15s;width:auto;margin-top:0}
+.btn-next:hover{background:var(--or-dk)}
+.btn-next:disabled{opacity:.45;cursor:not-allowed}
+.cu-intro{background:var(--bk);color:var(--wh);border-radius:8px 8px 0 0;padding:20px 24px}
+.cu-intro h3{font-family:'Playfair Display',serif;font-size:17px;margin-bottom:4px}
+.cu-intro p{font-size:12px;color:#888}
+.cu-card{border:1px solid var(--bd);border-top:none;background:var(--wh);padding:20px 24px}
+.cu-card:last-child{border-radius:0 0 8px 8px}
+.cu-card:not(:last-child){border-bottom:1px solid #F0F0EE}
+.cu-code{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.06em;background:var(--or-bg);color:var(--or);border:1px solid var(--or-bd);margin-right:8px}
+.cu-profil{display:inline-block;padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;background:#F3F4F6;color:#6B7280;border:1px solid var(--bd)}
+.cu-title{font-size:14px;font-weight:600;color:var(--bk);margin:8px 0 4px}
+.cu-desc{font-size:12.5px;color:var(--bk2);line-height:1.6;margin-bottom:12px}
+.cu-champs{background:var(--wh2);border-radius:6px;border:1px solid var(--bd);overflow:hidden;margin-top:10px}
+.cu-ch-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--bk3);padding:8px 14px;background:var(--bd);border-bottom:1px solid var(--bd)}
+.cu-ch-row{display:grid;grid-template-columns:140px 1fr;gap:10px;padding:8px 14px;border-bottom:1px solid #F5F5F3;font-size:12px}
+.cu-ch-row:last-child{border-bottom:none}
+.cu-bt{font-weight:600;color:var(--or);font-size:11px;padding-top:1px}
+.cu-val{color:var(--bk)}
+.cu-info{font-size:11px;color:var(--bk3);margin-top:2px}
+
+/* ── TIMELINE ── */
+.tl{position:relative;padding:4px 0}
+.tl::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--or) 0%,var(--bd) 100%)}
+.tl-item{display:flex;gap:20px;align-items:flex-start;padding-bottom:28px;position:relative}
+.tl-item:last-child{padding-bottom:0}
+.tl-dot{width:50px;height:50px;border-radius:50%;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0;font-size:10px;font-weight:700;position:relative;z-index:1;border:2px solid}
+.d-imm{background:#FFF5F0;border-color:var(--or);color:var(--or-dk)}
+.d-near{background:#EBF8FF;border-color:#4299E1;color:#1a56db}
+.d-fut{background:var(--ok-bg);border-color:#68D391;color:var(--ok)}
+.d-dist{background:var(--wh2);border-color:var(--bd);color:var(--bk3)}
+.dy{font-size:13px;font-weight:700}
+.tl-body{flex:1;padding-top:8px}
+.tl-date{font-size:13px;font-weight:700;color:var(--bk);margin-bottom:5px}
+.tl-ul{list-style:none}
+.tl-ul li{font-size:12.5px;color:var(--bk2);padding:4px 0 4px 13px;position:relative;line-height:1.55}
+.tl-ul li::before{content:'›';position:absolute;left:0;color:var(--or);font-weight:700}
+.otag{display:inline-block;padding:1px 6px;border-radius:3px;font-size:9.5px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;margin-left:5px}
+.o-rx{background:#DBEAFE;color:#1e40af}.o-tx{background:var(--ok-bg);color:var(--ok)}
+.o-er{background:#F3E8FF;color:#6b21a8}.o-eu{background:#FEE2E2;color:#991b1b}
+
+/* ── RESOURCES ── */
+.r-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
+@media(max-width:640px){.r-grid{grid-template-columns:1fr}}
+.r-card{display:block;text-decoration:none;padding:20px;border-radius:8px;border:1px solid var(--bd);background:var(--wh);transition:all .18s}
+.r-card:hover{border-color:var(--or);box-shadow:var(--shm);transform:translateY(-2px)}
+.r-aud{font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px}
+.r-title{font-family:'Playfair Display',serif;font-size:15px;color:var(--bk);margin-bottom:6px}
+.r-desc{font-size:12px;color:var(--bk2);line-height:1.65}
+.r-arr{margin-top:12px;font-size:11px;font-weight:600;color:var(--or)}
+.contact-box{background:var(--bk);border-radius:8px;padding:28px 32px;display:flex;align-items:center;justify-content:space-between;gap:28px;flex-wrap:wrap}
+.ct-left h3{font-family:'Playfair Display',serif;font-size:18px;color:var(--wh);margin-bottom:5px}
+.ct-left p{font-size:12.5px;color:#888;max-width:400px;line-height:1.65}
+.ct-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ct-tag{padding:3px 9px;border-radius:4px;font-size:11px;font-weight:500;background:rgba(255,107,43,.12);border:1px solid rgba(255,107,43,.22);color:var(--or-lt)}
+.ct-right{display:flex;flex-direction:column;gap:8px;flex-shrink:0}
+.ct-btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:6px;font-family:'Inter',sans-serif;font-size:13px;font-weight:600;text-decoration:none;transition:all .16s;cursor:pointer;border:none}
+.ct-or{background:var(--or);color:var(--wh)}
+.ct-or:hover{background:var(--or-dk)}
+.ct-gh{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:var(--wh)}
+.ct-gh:hover{background:rgba(255,255,255,.14)}
+.disc{background:var(--wa-bg);border:1px solid #FCD34D;border-radius:6px;padding:10px 14px;font-size:11px;color:var(--wa);line-height:1.6;margin-top:16px}
+.empty{text-align:center;padding:40px 20px;color:var(--bk3)}
+.empty-ico{font-size:36px;margin-bottom:9px}
+.err-box{background:var(--ko-bg);border:1px solid var(--ko-bd);border-radius:6px;padding:13px;color:var(--ko);font-size:12.5px;margin:14px}
+footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-top:1px solid var(--bd);margin-top:32px}
+.key-link:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+
+
+<header>
+  <div class="h-top">
+    <div>
+      <div class="h-eye">Outil de veille &amp; conformité · Réforme Facturation Électronique</div>
+      <h1 class="h-name">Vigil'E-Fact</h1>
+      <p class="h-sub">Art. 289 bis, 290 &amp; 290 A CGI · LFR 2022 art. 26 · Décret n° 2022-1299 · XP Z12-012/013/014</p>
+    </div>
+    <div class="h-badges">
+      <span class="badge b-rfe">⚡ RFE — 1ᵉʳ sept. 2026</span>
+      <span class="badge b-dt" id="date-badge"></span>
+      <span class="badge" style="background:rgba(66,133,244,.12);border:1px solid rgba(66,133,244,.25);color:#7BAAF7;font-size:10px">✦ Powered by Gemini</span>
+    </div>
+  </div>
+  <nav>
+    <button class="tab on" data-tab="veille">📡 Veille</button>
+    <button class="tab" data-tab="test">🔍 Tester ma facture</button>
+    <button class="tab" data-tab="cu">💼 Cas d'usage</button>
+    <button class="tab" data-tab="cal">📅 Calendrier</button>
+    <button class="tab" data-tab="res">🔗 Ressources &amp; Contact</button>
+  </nav>
+</header>
+
+<main>
+
+<!-- ══ VEILLE ══ -->
+<section id="sec-veille" class="sec on">
+  <div class="v-hero">
+    <div class="v-txt">
+      <h2>Quoi de neuf dans la RFE ?</h2>
+      <p>Recherche Google en temps réel sur les sources normatives et institutionnelles de la réforme française de la facturation électronique.</p>
+      <div class="chips">
+        <span class="chip">DGFiP</span><span class="chip">BOFiP</span><span class="chip">AFNOR</span>
+        <span class="chip">AIFE / PPF</span><span class="chip">The Invoicing Hub</span>
+        <span class="chip">Billentis</span><span class="chip">Éditeurs PDP</span>
+      </div>
+    </div>
+    <div class="radar-wrap">
+      <button id="btn-veille"><span class="ico">📡</span><span>Quoi de<br>neuf ?</span></button>
+      <span class="last-chk" id="last-chk">Jamais lancé</span>
+    </div>
+  </div>
+  <div class="card"><div id="veille-out">
+    <div class="empty"><div class="empty-ico">📰</div><p>Cliquez sur « Quoi de neuf ? » pour lancer la veille.</p></div>
+  </div></div>
+  <div class="disc">⚠️ Résultats issus de Google Search via Gemini. Vérifiez systématiquement auprès des sources primaires (BOFiP, légifrance.gouv.fr, impots.gouv.fr) avant tout conseil client.</div>
+</section>
+
+<!-- ══ TEST FACTURE ══ -->
+<section id="sec-test" class="sec">
+  <div class="s-head">
+    <h2 class="s-title">Analyse de conformité — 34 mentions obligatoires</h2>
+    <p class="s-desc">Art. 242 nonies A Annexe II CGI · Spécifications DGFiP · EN 16931 · XP Z12-012</p>
+  </div>
+  <div class="test-grid">
+    <div>
+      <div class="card">
+        <div class="c-head"><span class="c-ttl">Facture à analyser</span></div>
+        <div class="c-body">
+          <div class="drop-zone" id="drop-zone">
+            <input type="file" id="pdf-input" accept="application/pdf">
+            <div class="dz-ico">📄</div>
+            <div class="dz-txt">Glissez votre facture PDF ici</div>
+            <div class="dz-sub">ou cliquez pour sélectionner un fichier</div>
+          </div>
+          <div id="file-info" style="display:none" class="dz-file">
+            <span>📄</span><span id="file-name">—</span>
+            <button class="dz-remove" id="btn-remove">×</button>
+          </div>
+          <div style="margin:4px 0 6px;text-align:center;font-size:11.5px;color:var(--bk3)">— ou saisissez manuellement —</div>
+          <textarea id="inv-in" placeholder="Collez ici le contenu textuel de la facture…&#10;&#10;Exemple :&#10;N° FA-2024-0042 — 15/03/2024&#10;ABC SAS — SIREN 123456789&#10;Client : XYZ SARL — SIREN 987654321&#10;Travaux maçonnerie, 125 m² — 100 €/m²&#10;HT 12 500 € · TVA 20% 2 500 € · TTC 15 000 €&#10;Échéance 30j fin de mois — virement IBAN FR76…"></textarea>
+          <p class="hint">💡 Le PDF est lu directement par Gemini · Le texte brut fonctionne aussi</p>
+          <button class="btn btn-or" id="btn-test">🔍 Analyser la conformité</button>
+          <div id="test-load" style="display:none"><div class="loading-row"><div class="spinner"></div>Analyse des 34 mentions en cours…</div></div>
+        </div>
+      </div>
+    </div>
+    <div id="test-panel">
+      <div class="card">
+        <div class="gauge-wrap">
+          <svg class="gauge-svg" viewBox="0 0 120 120">
+            <circle class="g-track" cx="60" cy="60" r="54"/>
+            <circle class="g-fill" id="g-fill" cx="60" cy="60" r="54"/>
+            <text class="g-sc" x="60" y="60" id="g-score">—</text>
+          </svg>
+          <span class="g-label">Score de conformité (mentions)</span>
+          <span class="g-status" id="g-status" style="color:var(--bk3)">En attente d'analyse</span>
+        </div>
+        <div id="f-list">
+          <div class="empty" style="padding:24px"><p style="font-size:12px">Les 34 champs apparaîtront ici après analyse.</p></div>
+        </div>
+        <div id="beyond-box" style="display:none" class="beyond-box">
+          <div class="beyond-title">⚠️ Au-delà des 34 mentions : conditions de validité électronique</div>
+          <div class="beyond-item"><span class="beyond-ico">🔗</span><span><strong>Transmission via une Plateforme Agréée (PDP) ou le PPF</strong> — Dès le 1ᵉʳ sept. 2026, toute facture B2B doit transiter par une PA immatriculée ou Chorus Pro. Un PDF par email ne constituera plus une facture légale.</span></div>
+          <div class="beyond-item"><span class="beyond-ico">📐</span><span><strong>Format structuré obligatoire</strong> — <strong>Factur-X, UBL 2.1 ou CII D22B</strong> (XP Z12-012, profil EN 16931 minimum). Un PDF non structuré est invalide pour la transmission e-invoicing.</span></div>
+          <div class="beyond-item"><span class="beyond-ico">📍</span><span><strong>Adresse de routage électronique (BT-49 / BT-34)</strong> — Format <code>0225:SIREN</code>, inscrite dans l'Annuaire PPF. Sans cette donnée, la PA ne peut pas router la facture.</span></div>
+          <div class="beyond-item"><span class="beyond-ico">🔄</span><span><strong>Statuts de cycle de vie obligatoires</strong> — Quatre statuts transmis au Concentrateur PPF : <em>Déposée, Rejetée, Refusée</em> (PA) et <em>Encaissée</em> (vendeur si TVA à l'encaissement). Nécessaires au pré-remplissage TVA DGFiP.</span></div>
+          <div class="beyond-item"><span class="beyond-ico">🗄️</span><span><strong>Archivage légal 10 ans</strong> — Art. L102 B LPF. Conservation dans le format d'origine. Piste d'audit fiable (PAF) ou signature électronique qualifiée exigée.</span></div>
+        </div>
+        <div id="recs-panel" style="display:none">
+          <div class="recs"><div class="recs-title">Points d'attention</div><div id="recs-body"></div></div>
+        </div>
+      </div>
+      <div class="bench-bar">
+        <a class="bench-pill" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener">📊 Comparer les PDP</a>
+        <a class="bench-pill" href="https://www.impots.gouv.fr/professionnel/la-facturation-electronique-entre-entreprises" target="_blank" rel="noopener">🏛️ Liste officielle DGFiP</a>
+      </div>
+    </div>
+  </div>
+  <div class="disc">⚠️ <strong>Usage professionnel :</strong> Analyse indicative — la conformité définitive relève de l'expertise comptable et des spécifications DGFiP en vigueur.</div>
+</section>
+
+<!-- ══ CAS D'USAGE ══ -->
+<section id="sec-cu" class="sec">
+  <div class="s-head">
+    <h2 class="s-title">Quels cas d'usage pour mon entreprise ?</h2>
+    <p class="s-desc">Questionnaire · XP Z12-014 AFNOR (fév. 2026) · EN 16931 · Art. 283, 289 bis, 290 CGI</p>
+  </div>
+  <div class="quiz-wrap">
+    <div id="quiz-step-0" class="quiz-step on">
+      <div class="q-card">
+        <div class="q-progress" id="prog-0"></div>
+        <div class="q-num">Question 1 / 5</div>
+        <div class="q-text">Quel est votre régime de TVA ?</div>
+        <div class="q-options" id="opts-regime">
+          <label class="q-opt" data-val="normal"><span class="opt-ico">○</span>Assujetti normal à la TVA — taux 20%, 10% ou réduit</label>
+          <label class="q-opt" data-val="franchise"><span class="opt-ico">○</span>Franchise en base de TVA — art. 293 B CGI (auto-entrepreneur, micro)</label>
+          <label class="q-opt" data-val="partiel"><span class="opt-ico">○</span>Assujetti partiel ou mixte (association, holding…)</label>
+          <label class="q-opt" data-val="exo"><span class="opt-ico">○</span>Exonéré de TVA — art. 261 CGI (santé, enseignement…)</label>
+        </div>
+        <div class="q-nav"><span></span><button class="btn-next" id="next-0" disabled>Suivant →</button></div>
+      </div>
+    </div>
+    <div id="quiz-step-1" class="quiz-step">
+      <div class="q-card">
+        <div class="q-progress" id="prog-1"></div>
+        <div class="q-num">Question 2 / 5</div>
+        <div class="q-text">Vos transactions se font avec…</div>
+        <div class="q-options" id="opts-trans">
+          <label class="q-opt" data-val="b2b"><span class="opt-ico">○</span>Des professionnels privés uniquement (B2B)</label>
+          <label class="q-opt" data-val="b2g"><span class="opt-ico">○</span>Des entités publiques uniquement (B2G — marchés publics)</label>
+          <label class="q-opt" data-val="mixte"><span class="opt-ico">○</span>Les deux (B2B + B2G)</label>
+        </div>
+        <div class="q-nav"><button class="btn-prev" data-prev="0">← Retour</button><button class="btn-next" id="next-1" disabled>Suivant →</button></div>
+      </div>
+    </div>
+    <div id="quiz-step-2" class="quiz-step">
+      <div class="q-card">
+        <div class="q-progress" id="prog-2"></div>
+        <div class="q-num">Question 3 / 5</div>
+        <div class="q-text">Votre secteur d'activité principal ?</div>
+        <div class="q-options" id="opts-secteur">
+          <label class="q-opt" data-val="btp"><span class="opt-ico">○</span>🏗️ BTP — Bâtiment &amp; Travaux Publics</label>
+          <label class="q-opt" data-val="services"><span class="opt-ico">○</span>💼 Services (consulting, IT, formation, professions libérales…)</label>
+          <label class="q-opt" data-val="commerce"><span class="opt-ico">○</span>🛒 Commerce / Distribution / Retail</label>
+          <label class="q-opt" data-val="industrie"><span class="opt-ico">○</span>⚙️ Industrie / Production / Fabrication</label>
+          <label class="q-opt" data-val="autre"><span class="opt-ico">○</span>Autre secteur</label>
+        </div>
+        <div class="q-nav"><button class="btn-prev" data-prev="1">← Retour</button><button class="btn-next" id="next-2" disabled>Suivant →</button></div>
+      </div>
+    </div>
+    <div id="quiz-step-3" class="quiz-step">
+      <div class="q-card">
+        <div class="q-progress" id="prog-3"></div>
+        <div class="q-num">Question 4 / 5</div>
+        <div class="q-text">Quelles opérations réalisez-vous ? <span style="font-family:Inter;font-weight:400;font-size:14px">(plusieurs choix possibles)</span></div>
+        <p class="q-multi-note">Sélectionnez tout ce qui s'applique à votre activité.</p>
+        <div class="q-options" id="opts-ops" style="gap:6px">
+          <label class="q-opt" data-val="avoirs" data-multi="1"><span class="opt-ico">□</span>Émission d'avoirs / notes de crédit</label>
+          <label class="q-opt" data-val="acomptes" data-multi="1"><span class="opt-ico">□</span>Acomptes et/ou situations progressives de travaux</label>
+          <label class="q-opt" data-val="autoliquidation" data-multi="1"><span class="opt-ico">□</span>Sous-traitance avec autoliquidation de TVA — art. 283 al. 2 CGI</label>
+          <label class="q-opt" data-val="retenuegarantie" data-multi="1"><span class="opt-ico">□</span>Retenues de garantie — BTP (Loi 71-584)</label>
+          <label class="q-opt" data-val="intraue" data-multi="1"><span class="opt-ico">□</span>Livraisons intracommunautaires (clients UE)</label>
+          <label class="q-opt" data-val="export" data-multi="1"><span class="opt-ico">□</span>Export hors UE</label>
+          <label class="q-opt" data-val="affacturage" data-multi="1"><span class="opt-ico">□</span>Affacturage (cession de créances à un factor)</label>
+          <label class="q-opt" data-val="autofacture" data-multi="1"><span class="opt-ico">□</span>Auto-facturation (l'acheteur émet la facture pour votre compte)</label>
+        </div>
+        <div class="q-nav"><button class="btn-prev" data-prev="2">← Retour</button><button class="btn-next" id="next-3">Suivant →</button></div>
+      </div>
+    </div>
+    <div id="quiz-step-4" class="quiz-step">
+      <div class="q-card">
+        <div class="q-progress" id="prog-4"></div>
+        <div class="q-num">Question 5 / 5</div>
+        <div class="q-text">Quelle est la taille de votre entreprise ?</div>
+        <div class="q-options" id="opts-taille">
+          <label class="q-opt" data-val="tpe"><span class="opt-ico">○</span>Micro / TPE — &lt;10 salariés, CA &lt;2M€ — obligation émission : 1er sept. 2027</label>
+          <label class="q-opt" data-val="pme"><span class="opt-ico">○</span>PME — 10 à 249 salariés, CA &lt;50M€ — obligation émission : 1er sept. 2027</label>
+          <label class="q-opt" data-val="eti"><span class="opt-ico">○</span>ETI — 250 à 4 999 salariés — obligation émission : 1er sept. 2026</label>
+          <label class="q-opt" data-val="ge"><span class="opt-ico">○</span>Grande entreprise — ≥5 000 salariés ou ≥1,5Md€ CA — obligation émission : 1er sept. 2026</label>
+        </div>
+        <div class="q-nav"><button class="btn-prev" data-prev="3">← Retour</button><button class="btn-next" id="next-4" disabled>✨ Générer mes cas d'usage</button></div>
+      </div>
+    </div>
+    <div id="quiz-step-results" class="quiz-step">
+      <div id="cu-results"></div>
+      <div style="margin-top:14px;text-align:center">
+        <button class="btn btn-bk" style="width:auto;padding:9px 20px;margin-top:0" id="btn-restart">↺ Recommencer</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ CALENDRIER ══ -->
+<section id="sec-cal" class="sec">
+  <div class="s-head">
+    <h2 class="s-title">Calendrier de déploiement</h2>
+    <p class="s-desc">LFR 2022 art. 26 · Art. 289 bis &amp; 290 CGI · Décret 2022-1299 · Ordonnance 2025-1247</p>
+  </div>
+  <div class="card"><div class="c-body"><div class="tl">
+    <div class="tl-item">
+      <div class="tl-dot d-imm"><span class="dy">2026</span></div>
+      <div class="tl-body">
+        <div class="tl-date">1ᵉʳ septembre 2026 — <strong>Entrée en vigueur</strong></div>
+        <ul class="tl-ul">
+          <li>Toutes les entreprises assujetties à la TVA : obligation de <strong>recevoir</strong> des factures électroniques via une PDP ou le PPF <span class="otag o-rx">Réception ×tous</span></li>
+          <li><strong>Émission</strong> obligatoire pour les <strong>grandes entreprises (GE)</strong> — effectif ≥5 000 ou CA ≥1,5Md€ <span class="otag o-tx">Émission GE</span></li>
+          <li><strong>Émission</strong> obligatoire pour les <strong>ETI</strong> — 250 à 4 999 salariés, CA 50M€–1,5Md€ <span class="otag o-tx">Émission ETI</span></li>
+          <li>Début du <strong>e-reporting</strong> pour les transactions B2C et flux internationaux (GE &amp; ETI) <span class="otag o-er">E-reporting</span></li>
+          <li>Formats obligatoires : <strong>Factur-X, UBL 2.1 ou CII D22B</strong> — profil EN 16931 ou EXTENDED-CTC-FR (XP Z12-012)</li>
+          <li>Entrée en vigueur de l'<strong>Ordonnance 2025-1247</strong> (CIBS) — art. 289 bis, 290, 290 A restent dans le CGI</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot d-near"><span class="dy">2027</span></div>
+      <div class="tl-body">
+        <div class="tl-date">1ᵉʳ septembre 2027</div>
+        <ul class="tl-ul">
+          <li><strong>Émission</strong> obligatoire pour les <strong>PME</strong> — 10 à 249 salariés, CA &lt;50M€ <span class="otag o-tx">Émission PME</span></li>
+          <li><strong>Émission</strong> obligatoire pour les <strong>TPE et micro-entreprises</strong> — &lt;10 salariés, CA &lt;2M€ <span class="otag o-tx">Émission TPE</span></li>
+          <li>Généralisation du <strong>e-reporting</strong> à l'ensemble des assujettis <span class="otag o-er">E-reporting ×tous</span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot d-fut"><span class="dy">2028</span></div>
+      <div class="tl-body">
+        <div class="tl-date">Horizon 2028 — Consolidation &amp; ViDA</div>
+        <ul class="tl-ul">
+          <li>Bilan réglementaire — ajustements éventuels du cahier des charges DGFiP</li>
+          <li>Consolidation du marché PDP — probable vague de re-sélection</li>
+          <li>Alignement progressif avec la directive <strong>ViDA</strong> en cours de transposition</li>
+        </ul>
+      </div>
+    </div>
+    <div class="tl-item">
+      <div class="tl-dot d-dist"><span class="dy">2030</span></div>
+      <div class="tl-body">
+        <div class="tl-date">Horizon 2030 — ViDA (Directive UE)</div>
+        <ul class="tl-ul">
+          <li>Obligation de facturation électronique pour les transactions <strong>intracommunautaires B2B</strong> dans l'UE <span class="otag o-eu">UE</span></li>
+          <li>Digital Reporting Requirements (DRR) : reporting quasi-temps-réel sur les flux intra-UE</li>
+          <li>Interopérabilité obligatoire des systèmes nationaux entre États membres</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="disc" style="margin-top:20px">📌 <strong>Références :</strong> LFR 2022 art. 26 · Art. 289 bis, 290, 290 A CGI · Décret n°2022-1299 · Ordonnance 2025-1247 · Rescrit BOI-RES-TVA-000253</div>
+  </div></div>
+</section>
+
+<!-- ══ RESSOURCES ══ -->
+<section id="sec-res" class="sec">
+  <div class="s-head">
+    <h2 class="s-title">Ressources &amp; Benchmarks</h2>
+    <p class="s-desc">Références pour choisir sa Plateforme Agréée et suivre la réforme.</p>
+  </div>
+  <div class="r-grid">
+    <a class="r-card" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener"><p class="r-aud" style="color:#1a56db">🏢 Chefs d'entreprise — Choisir sa PDP</p><h3 class="r-title">Grand Benchmark des Plateformes Agréées</h3><p class="r-desc">Comparatif des PDP immatriculées DGFiP. Critères fonctionnels, techniques et tarifaires. The Invoicing Hub — 3ᵉ éd., avril 2026.</p><p class="r-arr">→ theinvoicinghub.com</p></a>
+    <a class="r-card" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--ok)">📊 Experts-comptables — Vue cabinet</p><h3 class="r-title">Benchmark PDP — Intégration cabinet</h3><p class="r-desc">Analyse sous l'angle cabinet : connecteurs ACD / EBP / Sage / Pennylane, APIs, workflows multi-clients. The Invoicing Hub, 2026.</p><p class="r-arr">→ theinvoicinghub.com</p></a>
+    <a class="r-card" href="https://www.impots.gouv.fr/professionnel/la-facturation-electronique-entre-entreprises" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--ko)">🏛️ Source officielle</p><h3 class="r-title">DGFiP — Portail facturation électronique</h3><p class="r-desc">Cahier des charges, FAQ, liste des PDP immatriculées, spécifications techniques et actualités officielles.</p><p class="r-arr">→ impots.gouv.fr</p></a>
+    <a class="r-card" href="https://www.afnor.org" target="_blank" rel="noopener"><p class="r-aud" style="color:#6b21a8">📐 Normalisation</p><h3 class="r-title">AFNOR — Normes XP Z12-012 / 013 / 014</h3><p class="r-desc">Formats Factur-X et cas d'usage par profil (MINIMUM, BASIC WL, EN 16931, EXTENDED-CTC-FR). Version 1.3 — fév. 2026.</p><p class="r-arr">→ afnor.org</p></a>
+    <a class="r-card" href="https://www.chorus-pro.gouv.fr" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--wa)">⚙️ PPF / Chorus Pro</p><h3 class="r-title">AIFE — Portail Public de Facturation</h3><p class="r-desc">PPF géré par l'AIFE : dépôt, consultation, Annuaire des entreprises, documentation technique.</p><p class="r-arr">→ chorus-pro.gouv.fr</p></a>
+    <a class="r-card" href="https://www.billentis.com" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--bk3)">🌍 Veille internationale</p><h3 class="r-title">Billentis — Global E-Invoicing Report 2025</h3><p class="r-desc">Benchmark mondial, tendances CTC et ViDA. Rapport 2025 : « Watch Out for the Tornado ».</p><p class="r-arr">→ billentis.com</p></a>
+  </div>
+  <div class="contact-box">
+    <div class="ct-left">
+      <h3>Besoin d'un accompagnement ?</h3>
+      <p>Altae accompagne les PME &amp; cabinets dans leur transformation digitale — stratégie RFE, choix de PDP, mise en conformité et pilotage de projet.</p>
+      <div class="ct-tags">
+        <span class="ct-tag">Facturation électronique</span><span class="ct-tag">BTP multi-activités</span>
+        <span class="ct-tag">Choix de PDP</span><span class="ct-tag">Transformation digitale</span>
+      </div>
+    </div>
+    <div class="ct-right">
+      <a class="ct-btn ct-or" href="mailto:contact@altae.fr">✉️ Prendre contact</a>
+      <a class="ct-btn ct-gh" href="https://www.linkedin.com/in/aurelien-picollier/" target="_blank" rel="noopener">💼 LinkedIn — Aurélien Picollier</a>
+    </div>
+  </div>
+</section>
+
+</main>
+<footer>
+  Vigil'E-Fact · Cabinet Altae · Non opposable à l'administration fiscale ·
+  Sources : Art. 289 bis, 290, 290 A CGI · Décret 2022-1299 · XP Z12-012/013/014 AFNOR (fév. 2026) · EN 16931
+</footer>
+
+
+<script>
+/* ═══════════════════════════════════
+   CONFIGURATION — Remplacez par votre clé Google AI Studio
+   https://aistudio.google.com/apikey  (gratuit, 1500 req/jour)
+═══════════════════════════════════ */
+const GEMINI_KEY = 'VOTRE_CLE_GOOGLE_ICI';
+function getKey(){ return GEMINI_KEY; }
+
+/* ═══════════════════════════════════
+   GEMINI API
+═══════════════════════════════════ */
+const GEMINI_MODEL = 'gemini-2.0-flash';
+const GEMINI_BASE  = 'https://generativelanguage.googleapis.com/v1beta/models';
+
+async function callGemini({ prompt, pdfBase64 = null, useSearch = false }) {
+  const key = getKey();
+  if (!key || key === 'VOTRE_CLE_GOOGLE_ICI') throw new Error('Clé API non configurée — éditez la constante GEMINI_KEY dans le fichier HTML.');
+
+  const parts = [];
+  if (pdfBase64) {
+    parts.push({ inlineData: { mimeType: 'application/pdf', data: pdfBase64 } });
+  }
+  parts.push({ text: prompt });
+
+  const body = {
+    contents: [{ parts }],
+    generationConfig: { temperature: 0.1 }
+  };
+  if (useSearch) body.tools = [{ google_search: {} }];
+
+  const resp = await fetch(
+    `${GEMINI_BASE}/${GEMINI_MODEL}:generateContent?key=${key}`,
+    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
+  );
+  const data = await resp.json();
+  if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
+  if (!data.candidates?.[0]) throw new Error('Réponse vide de Gemini');
+  return data.candidates[0].content.parts.filter(p => p.text).map(p => p.text).join('');
+}
+
+function parseJSON(text) {
+  const m = text.replace(/```json|```/g, '').match(/\{[\s\S]*\}/);
+  if (!m) throw new Error('Pas de JSON dans la réponse');
+  return JSON.parse(m[0]);
+}
+
+/* ═══════════════════════════════════
+   INIT
+═══════════════════════════════════ */
+document.getElementById('date-badge').textContent =
+  new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+
+document.querySelectorAll('.tab').forEach(b => {
+  b.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+    document.querySelectorAll('.sec').forEach(x => x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById('sec-' + b.dataset.tab).classList.add('on');
+  });
+});
+
+/* ═══════════════════════════════════
+   VEILLE — Gemini + Google Search
+═══════════════════════════════════ */
+document.getElementById('btn-veille').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-veille');
+  const out  = document.getElementById('veille-out');
+  btn.disabled = true; btn.classList.add('scanning');
+  out.innerHTML = '<div class="loading-row"><div class="spinner"></div>Recherche Google en cours — DGFiP, AFNOR, AIFE, The Invoicing Hub, Billentis, éditeurs PDP…</div>';
+
+  const today = new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+
+  try {
+    const prompt = `Tu es un expert en facturation électronique française. Effectue une recherche Google sur les actualités récentes (2025-2026) concernant la réforme de la facturation électronique en France (RFE, e-invoicing).
+
+Recherche les nouvelles provenant de :
+- DGFiP (impots.gouv.fr) : nouvelles règles, mise à jour du cahier des charges, nouvelles PDP immatriculées ou retirées
+- BOFiP : nouvelles instructions fiscales (articles 289 bis, 290 CGI)
+- AFNOR : évolutions normes XP Z12-012, Z12-013, Z12-014 (Factur-X)
+- AIFE / Chorus Pro : actualités PPF
+- The Invoicing Hub : publications, benchmarks, analyses
+- Billentis : rapports et veille internationale
+- Éditeurs PDP : nouvelles immatriculations, fonctionnalités
+
+Réponds UNIQUEMENT avec ce JSON (sans backticks ni markdown) :
+{"lastUpdated":"${today}","summary":"synthèse factuelle en une phrase","items":[{"source":"NOM","color":"#HEX","date":"période","title":"titre court précis","summary":"résumé factuel 2-3 phrases"}]}`;
+
+    const text = await callGemini({ prompt, useSearch: true });
+    let p;
+    try { p = parseJSON(text); }
+    catch { out.innerHTML = `<div class="c-body" style="padding:16px;font-size:13px;line-height:1.7;color:var(--bk2)">${text.replace(/\n/g,'<br>')}</div>`; return; }
+
+    document.getElementById('last-chk').textContent = 'Dernière vérification : ' + today;
+    let html = '';
+    if (p.summary) html += `<div class="v-intro">🔎 ${p.summary}</div>`;
+    if (p.items?.length) {
+      p.items.forEach(it => {
+        html += `<div class="news-item">
+          <div class="n-meta">
+            <span class="n-badge" style="background:${it.color||'#888'}22;color:${it.color||'#888'}">${it.source}</span>
+            <span class="n-date">${it.date||''}</span>
+          </div>
+          <div class="n-title">${it.title}</div>
+          <div class="n-sum">${it.summary}</div>
+        </div>`;
+      });
+    } else {
+      html += '<div class="empty"><p>Aucune nouveauté majeure détectée lors de cette recherche.</p></div>';
+    }
+    out.innerHTML = html;
+
+  } catch(e) {
+    out.innerHTML = `<div class="err-box">⚠️ Erreur : ${e.message}</div>`;
+  } finally {
+    btn.disabled = false; btn.classList.remove('scanning');
+  }
+});
+
+/* ═══════════════════════════════════
+   34 CHAMPS
+═══════════════════════════════════ */
+const FIELDS = [
+  {id:1,name:"Numéro séquentiel unique de facture",note:"Art. 242 nonies A, 1° Annexe II CGI",req:true},
+  {id:2,name:"Date d'émission de la facture",note:"Art. 242 nonies A, 2°",req:true},
+  {id:3,name:"Type de document (facture, avoir, acompte…)",note:"Spéc. DGFiP — Nature de l'opération",req:true},
+  {id:4,name:"Dénomination sociale du fournisseur / émetteur",note:"Art. 242 nonies A, 4°",req:true},
+  {id:5,name:"Adresse du fournisseur (siège social)",note:"Art. 242 nonies A, 4°",req:true},
+  {id:6,name:"SIREN / SIRET du fournisseur",note:"Spéc. DGFiP — Données vendeur (nouveau RFE)",req:true},
+  {id:7,name:"N° TVA intracommunautaire du fournisseur",note:"Art. 242 nonies A, 5°",req:true},
+  {id:8,name:"Dénomination sociale du client / acquéreur",note:"Art. 242 nonies A, 6°",req:true},
+  {id:9,name:"Adresse de facturation du client",note:"Art. 242 nonies A, 6°",req:true},
+  {id:10,name:"SIREN / SIRET du client",note:"Spéc. DGFiP — nouveau champ obligatoire RFE",req:true},
+  {id:11,name:"N° TVA intracommunautaire du client (si assujetti)",note:"Art. 242 nonies A, 6° — si applicable",req:false},
+  {id:12,name:"Désignation précise des biens ou services",note:"Art. 242 nonies A, 7°",req:true},
+  {id:13,name:"Quantité et unité de mesure",note:"Art. 242 nonies A, 8°",req:true},
+  {id:14,name:"Prix unitaire hors taxes",note:"Art. 242 nonies A, 9°",req:true},
+  {id:15,name:"Rabais, remises, ristournes (si non inclus dans le PU HT)",note:"Art. 242 nonies A, 10° — si applicable",req:false},
+  {id:16,name:"Taux de TVA légalement applicable",note:"Art. 242 nonies A, 11°",req:true},
+  {id:17,name:"Montant de TVA par taux applicable",note:"Art. 242 nonies A, 11°",req:true},
+  {id:18,name:"Montant total hors taxes (HT)",note:"Art. 242 nonies A, 12°",req:true},
+  {id:19,name:"Montant total toutes taxes comprises (TTC)",note:"Art. 242 nonies A",req:true},
+  {id:20,name:"Devise de facturation (code ISO 4217)",note:"Spéc. DGFiP — si ≠ EUR",req:true},
+  {id:21,name:"Motif d'exonération de TVA",note:"Art. 242 nonies A, 13° — si applicable",req:false},
+  {id:22,name:"Mention d'autoliquidation de TVA",note:"Art. 283 al. 2 CGI — si applicable",req:false},
+  {id:23,name:"Mention « TVA non applicable » art. 293 B CGI",note:"Franchise en base — auto-entrepreneurs",req:false},
+  {id:24,name:"Conditions et délais de paiement",note:"Spéc. DGFiP + art. L441-9 C. com. (LME)",req:true},
+  {id:25,name:"Date d'échéance de paiement",note:"Spéc. DGFiP",req:true},
+  {id:26,name:"Mode de règlement (virement, chèque…)",note:"Spéc. DGFiP",req:true},
+  {id:27,name:"IBAN du bénéficiaire",note:"Spéc. DGFiP — si règlement par virement",req:false},
+  {id:28,name:"BIC du bénéficiaire",note:"Spéc. DGFiP — si virement international",req:false},
+  {id:29,name:"Catégorie de la transaction (B2B, B2G, intracom…)",note:"Spéc. DGFiP — Cat. opération",req:true},
+  {id:30,name:"Adresse de livraison des biens (si différente)",note:"Spéc. DGFiP — si applicable",req:false},
+  {id:31,name:"Option de taxation TVA (encaissement ou débits)",note:"Spéc. DGFiP — prestations de services",req:true},
+  {id:32,name:"N° de bon de commande ou référence contrat / marché",note:"Spéc. DGFiP — obligatoire B2G",req:false},
+  {id:33,name:"N° de la facture rectifiée (avoirs uniquement)",note:"Art. 242 nonies A — uniquement pour les avoirs",req:false},
+  {id:34,name:"Adresse électronique de routage (BT-49 / BT-34)",note:"Spéc. DGFiP — schemeID 0225 + SIREN — Annuaire PPF",req:true},
+];
+
+/* ═══════════════════════════════════
+   PDF DRAG & DROP
+═══════════════════════════════════ */
+let pdfBase64 = null;
+const dropZone = document.getElementById('drop-zone');
+const pdfInput = document.getElementById('pdf-input');
+
+dropZone.addEventListener('dragover',  e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', ()  => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f && f.type === 'application/pdf') loadPDF(f);
+});
+pdfInput.addEventListener('change', e => { if(e.target.files[0]) loadPDF(e.target.files[0]); });
+document.getElementById('btn-remove').addEventListener('click', () => {
+  pdfBase64 = null;
+  document.getElementById('file-info').style.display = 'none';
+  dropZone.style.display = '';
+  pdfInput.value = '';
+});
+
+function loadPDF(file) {
+  const r = new FileReader();
+  r.onload = e => {
+    pdfBase64 = e.target.result.split(',')[1];
+    document.getElementById('file-name').textContent = file.name;
+    document.getElementById('file-info').style.display = 'flex';
+    dropZone.style.display = 'none';
+  };
+  r.readAsDataURL(file);
+}
+
+/* ═══════════════════════════════════
+   TEST FACTURE — Gemini
+═══════════════════════════════════ */
+document.getElementById('btn-test').addEventListener('click', async () => {
+  const txt = document.getElementById('inv-in').value.trim();
+  if (!pdfBase64 && !txt) { alert('Glissez un PDF ou saisissez le contenu de la facture.'); return; }
+
+  const btn  = document.getElementById('btn-test');
+  const load = document.getElementById('test-load');
+  btn.disabled = true; load.style.display = 'block';
+  setGauge(0, 'Analyse en cours…', 'var(--bk3)');
+  document.getElementById('f-list').innerHTML = '<div class="loading-row"><div class="spinner"></div>Vérification des 34 mentions…</div>';
+  document.getElementById('beyond-box').style.display = 'none';
+  document.getElementById('recs-panel').style.display = 'none';
+
+  const fJson = JSON.stringify(FIELDS.map(f => ({ id: f.id, name: f.name, req: f.req })));
+  const prompt = `Tu es un expert en facturation électronique française (RFE). Analyse la facture ci-jointe (ou le texte ci-dessous) et vérifie les 34 mentions obligatoires.
+
+${!pdfBase64 ? 'FACTURE :\n' + txt + '\n\n' : ''}CHAMPS À VÉRIFIER : ${fJson}
+
+Pour chaque champ, détermine : "present" (identifié clairement), "absent" (non trouvé), "incomplete" (partiellement renseigné), "na" (non applicable au contexte de cette facture).
+Calcule un score 0-100 basé sur les champs req:true présents.
+Fournis 3 à 5 recommandations courtes et actionnables.
+
+Réponds UNIQUEMENT avec ce JSON (sans backticks ni markdown) :
+{"score":0-100,"status":"Conforme"|"Partiellement conforme"|"Non conforme","fields":[{"id":1,"status":"...","comment":"commentaire court si nécessaire"}],"recs":["rec1","rec2"]}`;
+
+  try {
+    const text = await callGemini({ prompt, pdfBase64: pdfBase64 || null });
+    const p = parseJSON(text);
+
+    const score = p.score || 0;
+    const col = score >= 80 ? 'var(--ok)' : score >= 50 ? 'var(--wa)' : 'var(--ko)';
+    setGauge(score, p.status || '—', col);
+
+    const fmap = {};
+    (p.fields || []).forEach(f => { fmap[f.id] = f; });
+
+    const dots = {
+      present:    { i:'✓', c:'d-ok' },
+      absent:     { i:'✗', c:'d-ko' },
+      incomplete: { i:'~', c:'d-pt' },
+      na:         { i:'—', c:'d-na' },
+      pending:    { i:'·', c:'d-pd' }
+    };
+
+    let html = '<div>';
+    FIELDS.forEach(f => {
+      const r = fmap[f.id] || { status:'pending' };
+      const d = dots[r.status] || dots.pending;
+      const opt = f.req ? '' : ' <span class="cond">(si applic.)</span>';
+      html += `<div class="f-row">
+        <span class="f-num">${f.id}</span>
+        <div>
+          <div class="f-name">${f.name}${opt}</div>
+          <div class="f-note">${f.note}${r.comment ? ' · ' + r.comment : ''}</div>
+        </div>
+        <span class="f-dot ${d.c}">${d.i}</span>
+      </div>`;
+    });
+    html += '</div>';
+    document.getElementById('f-list').innerHTML = html;
+    document.getElementById('beyond-box').style.display = 'block';
+
+    if (p.recs?.length) {
+      document.getElementById('recs-panel').style.display = 'block';
+      document.getElementById('recs-body').innerHTML = p.recs
+        .map(r => `<div class="rec-row"><span class="rec-ico">⚠</span><span>${r}</span></div>`)
+        .join('');
+    }
+  } catch(e) {
+    document.getElementById('f-list').innerHTML = `<div class="err-box">⚠️ ${e.message}</div>`;
+  } finally {
+    btn.disabled = false; load.style.display = 'none';
+  }
+});
+
+function setGauge(score, label, color) {
+  const c = 2 * Math.PI * 54;
+  document.getElementById('g-fill').style.strokeDashoffset = c * (1 - score / 100);
+  document.getElementById('g-fill').style.stroke = score >= 80 ? '#1E7A4A' : score >= 50 ? '#B45309' : '#C53030';
+  document.getElementById('g-score').textContent = score > 0 ? score + '%' : '—';
+  document.getElementById('g-status').textContent = label;
+  document.getElementById('g-status').style.color = color;
+}
+
+/* ═══════════════════════════════════
+   CAS D'USAGE
+═══════════════════════════════════ */
+const answers = { regime:null, trans:null, secteur:null, ops:[], taille:null };
+const STEPS = 5;
+
+function renderProgress(){
+  for(let i = 0; i < STEPS; i++){
+    const el = document.getElementById('prog-' + i);
+    if(!el) continue;
+    el.innerHTML = '';
+    for(let j = 0; j < STEPS; j++){
+      const d = document.createElement('div');
+      d.className = 'q-dot' + (j <= i ? ' done' : '');
+      el.appendChild(d);
+    }
+  }
+}
+renderProgress();
+
+['regime','trans','secteur','taille'].forEach(key => {
+  const sm = { regime:0, trans:1, secteur:2, taille:4 };
+  const step = sm[key];
+  const cont = document.getElementById('opts-' + key);
+  if(!cont) return;
+  cont.querySelectorAll('.q-opt').forEach(opt => {
+    opt.addEventListener('click', () => {
+      cont.querySelectorAll('.q-opt').forEach(o => { o.classList.remove('sel'); o.querySelector('.opt-ico').textContent = '○'; });
+      opt.classList.add('sel'); opt.querySelector('.opt-ico').textContent = '●';
+      answers[key] = opt.dataset.val;
+      const nb = document.getElementById('next-' + step);
+      if(nb) nb.disabled = false;
+    });
+  });
+});
+
+document.getElementById('opts-ops').querySelectorAll('.q-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    opt.classList.toggle('sel');
+    const ico = opt.querySelector('.opt-ico');
+    if(opt.classList.contains('sel')){ ico.textContent = '✔'; answers.ops.push(opt.dataset.val); }
+    else { ico.textContent = '□'; answers.ops = answers.ops.filter(v => v !== opt.dataset.val); }
+  });
+});
+
+[0,1,2,3].forEach(i => {
+  const nb = document.getElementById('next-' + i);
+  if(nb) nb.addEventListener('click', () => {
+    document.getElementById('quiz-step-' + i).classList.remove('on');
+    document.getElementById('quiz-step-' + (i+1)).classList.add('on');
+  });
+});
+
+document.getElementById('next-4').addEventListener('click', generateResults);
+
+document.querySelectorAll('.btn-prev').forEach(b => {
+  b.addEventListener('click', () => {
+    const prev = parseInt(b.dataset.prev);
+    document.getElementById('quiz-step-' + (prev + 1)).classList.remove('on');
+    document.getElementById('quiz-step-' + prev).classList.add('on');
+  });
+});
+
+document.getElementById('btn-restart').addEventListener('click', () => {
+  answers.regime = null; answers.trans = null; answers.secteur = null;
+  answers.ops = []; answers.taille = null;
+  document.querySelectorAll('.q-opt').forEach(o => {
+    o.classList.remove('sel');
+    const ic = o.querySelector('.opt-ico');
+    if(ic) ic.textContent = o.dataset.multi ? '□' : '○';
+  });
+  [0,1,2,4].forEach(i => { const nb = document.getElementById('next-' + i); if(nb) nb.disabled = true; });
+  document.getElementById('quiz-step-results').classList.remove('on');
+  document.getElementById('quiz-step-0').classList.add('on');
+  document.getElementById('cu-results').innerHTML = '';
+});
+
+const CAS_USAGE = [
+  {id:"CU-01",title:"Facture commerciale B2B standard",norm:"XP Z12-014 §4.2",profil:"EN 16931",desc:"Transaction de vente de biens ou services entre deux assujettis à la TVA établis en France. Cas d'usage de base, commun à toutes les entreprises soumises à la réforme.",trigger:a=>a.regime==='normal',champs:[{bt:"BT-3",label:"Type de facture",val:"380",info:"UNTDID 1001 — 380 = Facture commerciale"},{bt:"BT-49",label:"Adresse électronique acheteur",val:"0225:SIREN_ACHETEUR",info:"Clé de routage PDP — schemeID 0225 + SIREN (ou SIREN_SIRET)"},{bt:"BT-34",label:"Adresse électronique vendeur",val:"0225:SIREN_VENDEUR",info:"Pour réception des statuts de cycle de vie"},{bt:"BT-31",label:"N° TVA IC vendeur",val:"FRxx123456789",info:"Obligatoire pour tout assujetti normal"},{bt:"BT-95",label:"Code catégorie TVA",val:"S",info:"S = Standard rate"}]},
+  {id:"CU-02",title:"Avoir / Note de crédit",norm:"XP Z12-014 §4.2.5",profil:"EN 16931",desc:"Annulation totale ou partielle d'une facture commerciale antérieure. Doit impérativement référencer la facture d'origine.",trigger:a=>a.ops.includes('avoirs'),champs:[{bt:"BT-3",label:"Type de document",val:"381",info:"381 = Note de crédit (avoir) — UNTDID 1001"},{bt:"BT-25",label:"N° facture rectifiée",val:"Référence de la facture annulée",info:"Obligatoire — absence = rejet probable par la PA"},{bt:"BT-26",label:"Date de la facture rectifiée",val:"AAAA-MM-JJ",info:"Date d'émission de la facture d'origine"}]},
+  {id:"CU-03",title:"Facture d'acompte",norm:"XP Z12-014 Annexe A §2",profil:"EN 16931",desc:"Facturation d'un acompte avant livraison ou réalisation complète. La TVA est exigible dès l'encaissement, même si l'assujetti est aux débits.",trigger:a=>a.ops.includes('acomptes'),champs:[{bt:"BT-3",label:"Type de facture",val:"386",info:"386 = Prepayment invoice"},{bt:"BT-20",label:"Conditions de paiement",val:"Acompte — XX% du montant HT",info:"Préciser le caractère d'acompte et le taux"},{bt:"BT-81",label:"Mode de règlement",val:"30 (virement) ou 20 (chèque)",info:"Codes UNCL 4461"}]},
+  {id:"CU-04",title:"Situation de travaux / Facturation progressive",norm:"XP Z12-014 Annexe A",profil:"EN 16931 / EXTENDED-CTC-FR",desc:"Facturation périodique selon l'avancement du chantier. Chaque situation déduit les acomptes et situations antérieurs par des lignes négatives référencées.",trigger:a=>a.secteur==='btp'&&a.ops.includes('acomptes'),champs:[{bt:"BT-3",label:"Type de facture",val:"380 (situation) ou 386 (acompte)",info:""},{bt:"BT-11",label:"Référence du chantier / projet",val:"Référence chantier",info:"Identifiant pour le rapprochement comptable"},{bt:"BT-12",label:"Référence du marché / contrat",val:"N° du contrat de construction",info:""},{bt:"Ligne négative",label:"Déduction situations antérieures",val:"Montant négatif par situation/acompte antérieur",info:"Référencer la facture antérieure déduite"},{bt:"BT-20",label:"Conditions de paiement",val:"Situation n°X — Avancement : XX%",info:"Préciser le numéro de situation et le % d'avancement"}]},
+  {id:"CU-05",title:"Autoliquidation TVA — Sous-traitance BTP",norm:"XP Z12-014 Annexe A — Art. 283 al. 2 CGI",profil:"EN 16931",desc:"Le sous-traitant facture HT (TVA = 0). C'est le preneur assujetti (donneur d'ordre) qui déclare et acquitte la TVA. Obligatoire pour les travaux de construction, entretien, réparation, nettoyage et installation.",trigger:a=>a.ops.includes('autoliquidation'),champs:[{bt:"BT-95",label:"Code catégorie TVA",val:"AE",info:"AE = Autoliquidation (Reverse Charge)"},{bt:"BT-96",label:"Motif d'autoliquidation",val:"Autoliquidation — art. 283 al. 2 CGI",info:"Mention légale obligatoire sur la facture"},{bt:"BT-102",label:"Montant TVA collectée",val:"0,00",info:"Le vendeur facture 0€ — l'acheteur l'acquitte"},{bt:"BT-48",label:"N° TVA IC de l'acheteur",val:"FRxx999999999",info:"Obligatoire pour valider l'autoliquidation"}]},
+  {id:"CU-06",title:"Franchise en base — art. 293 B CGI",norm:"XP Z12-014 — Art. 293 B CGI",profil:"EN 16931",desc:"L'auto-entrepreneur ou micro-entreprise sous le seuil de franchise ne collecte aucune TVA. La mention légale est obligatoire, et le N° TVA IC ne doit PAS figurer.",trigger:a=>a.regime==='franchise',champs:[{bt:"BT-95",label:"Code catégorie TVA",val:"O",info:"O = Not subject to VAT"},{bt:"BT-96",label:"Motif de non-imposition",val:"TVA non applicable — art. 293 B du CGI",info:"Mention légale obligatoire"},{bt:"BT-31",label:"N° TVA IC vendeur",val:"ABSENT — ne pas renseigner",info:"Un micro-entrepreneur en franchise n'a pas de N° TVA IC"},{bt:"BT-102",label:"Montant TVA",val:"0,00",info:""}]},
+  {id:"CU-07",title:"Marchés publics — B2G via Chorus Pro",norm:"XP Z12-014 §4.1.1 — Art. L2192-1 à L2192-7 CCP",profil:"EN 16931",desc:"Les factures à destination d'entités publiques transitent par Chorus Pro (PPF pour le B2G). L'adresse de routage utilise la nomenclature SIRET + code service exécutant.",trigger:a=>a.trans==='b2g'||a.trans==='mixte',champs:[{bt:"BT-49",label:"Adresse électronique entité publique",val:"0225:SIREN_SIRET_CODE_SERVICE",info:"Format Chorus Pro — SIREN + SIRET + CODE_SERVICE_EXECUTANT"},{bt:"BT-10",label:"Référence structure (EJ)",val:"Code EJ fourni par l'acheteur public",info:"Obligatoire pour les marchés avec engagement juridique"},{bt:"BT-12",label:"Référence marché / contrat",val:"N° du marché public",info:""},{bt:"BT-13",label:"N° bon de commande",val:"N° BC fourni par l'entité publique",info:"Si applicable"}]},
+  {id:"CU-08",title:"Livraison intracommunautaire exonérée",norm:"XP Z12-014 — Art. 262 ter I CGI",profil:"EN 16931",desc:"Livraison de biens à un assujetti UE. Exonération sous conditions (transport hors France + N° TVA acheteur valide au VIES).",trigger:a=>a.ops.includes('intraue'),champs:[{bt:"BT-95",label:"Code catégorie TVA",val:"K",info:"K = VAT exempt — EEA intra-community supply"},{bt:"BT-96",label:"Motif d'exonération",val:"Livraison intracommunautaire — art. 262 ter I CGI",info:""},{bt:"BT-48",label:"N° TVA IC de l'acheteur",val:"Numéro TVA UE valide (VIES)",info:"Obligatoire — vérifier la validité VIES"},{bt:"BT-102",label:"Montant TVA",val:"0,00",info:""}]},
+  {id:"CU-09",title:"Export de biens hors UE",norm:"XP Z12-014 — Art. 262 I CGI",profil:"EN 16931",desc:"Exportation physique hors de l'UE. Exonération TVA, justifiée par la preuve de sortie du territoire douanier (DAE / MRN).",trigger:a=>a.ops.includes('export'),champs:[{bt:"BT-95",label:"Code catégorie TVA",val:"G",info:"G = Free export item, tax not charged"},{bt:"BT-96",label:"Motif d'exonération",val:"Exportation — art. 262 I CGI",info:""},{bt:"BT-102",label:"Montant TVA",val:"0,00",info:""}]},
+  {id:"CU-10",title:"Affacturage — Cession de créances",norm:"XP Z12-014 Annexe A §4 — Profil EXTENDED-CTC-FR",profil:"EXTENDED-CTC-FR",desc:"Le vendeur cède ses créances à un affactureur. La facture identifie le bénéficiaire effectif du paiement (l'affactureur) et les modalités de la cession.",trigger:a=>a.ops.includes('affacturage'),champs:[{bt:"EXT-FR-FE-BG-08",label:"Bloc BÉNÉFICIAIRE (affactureur)",val:"Profil EXTENDED-CTC-FR — SIREN + IBAN affactureur",info:"Identifie l'affactureur comme bénéficiaire du paiement"},{bt:"BT-84",label:"IBAN de paiement",val:"IBAN de l'affactureur",info:"Le paiement transite vers l'affactureur"},{bt:"BT-83",label:"Référence de virement",val:"Cession Dailly + N° facture",info:""}]},
+  {id:"CU-11",title:"Retenue de garantie — BTP",norm:"XP Z12-014 Annexe A — Loi n° 71-584 du 16/07/1971",profil:"EN 16931 / EXTENDED-CTC-FR",desc:"Retenue de 5% sur les marchés de travaux privés, libérée après le délai de garantie d'un an. Matérialisée par une ligne de montant négatif dans la facture.",trigger:a=>a.secteur==='btp'&&a.ops.includes('retenuegarantie'),champs:[{bt:"BT-3",label:"Type de facture",val:"380",info:""},{bt:"Ligne négative",label:"Retenue de garantie",val:"−5% du montant HT de la situation",info:"Ligne à montant négatif — bonne pratique XP Z12-014 Annexe A"},{bt:"BT-127",label:"Note de ligne",val:"Retenue de garantie 5% — Loi n° 71-584 du 16/07/1971",info:"Préciser le fondement légal"},{bt:"BT-20",label:"Conditions de paiement",val:"Retenue libérée à l'expiration du délai de garantie (1 an)",info:""}]},
+  {id:"CU-12",title:"Auto-facturation (mandat de facturation)",norm:"XP Z12-014 §4.1.4.5.3 — BOI-TVA-DECLA-30-20-10",profil:"EN 16931 / EXTENDED-CTC-FR",desc:"L'acheteur émet la facture pour le compte du vendeur sous mandat. Les adresses de routage sont inversées : la PA-E est côté acheteur.",trigger:a=>a.ops.includes('autofacture'),champs:[{bt:"BT-3",label:"Type de document",val:"389",info:"389 = Self-billed invoice — UNTDID 1001"},{bt:"BT-34",label:"Adresse électronique VENDEUR",val:"0225:SIREN_VENDEUR",info:"BT-34 = adresse de réception pour le vendeur en auto-facturation"},{bt:"BT-49",label:"Adresse électronique ACHETEUR",val:"0225:SIREN_ACHETEUR",info:"Pour les statuts retours"},{bt:"EXT-FR-FE-BG-05",label:"Bloc FACTURANT",val:"Identité de l'acheteur qui facture",info:"Profil EXTENDED-CTC-FR"}]},
+];
+
+function generateResults() {
+  document.getElementById('quiz-step-4').classList.remove('on');
+  document.getElementById('quiz-step-results').classList.add('on');
+
+  const applicable = CAS_USAGE.filter(cu => { try { return cu.trigger(answers); } catch { return false; } });
+
+  const tailleLabel = { tpe:'Micro/TPE — obligation émission : 1ᵉʳ sept. 2027', pme:'PME — obligation émission : 1ᵉʳ sept. 2027', eti:'ETI — obligation émission : 1ᵉʳ sept. 2026', ge:'GE — obligation émission : 1ᵉʳ sept. 2026' }[answers.taille] || '—';
+  const secteurLabel = { btp:'BTP', services:'Services', commerce:'Commerce', industrie:'Industrie', autre:'Autre' }[answers.secteur] || '—';
+
+  const res = document.getElementById('cu-results');
+
+  if (!applicable.length) {
+    res.innerHTML = `<div class="q-card"><p style="font-size:13px;color:var(--bk2)">Aucun cas d'usage spécifique identifié au-delà du cas nominal. Contactez Altae pour un audit personnalisé.</p></div>`;
+    return;
+  }
+
+  let html = `<div class="cu-intro"><h3>${applicable.length} cas d'usage identifié${applicable.length>1?'s':''}</h3><p>${secteurLabel} · ${tailleLabel}</p></div>`;
+  applicable.forEach(cu => {
+    html += `<div class="cu-card">
+      <div><span class="cu-code">${cu.id}</span><span class="cu-profil">Profil : ${cu.profil}</span></div>
+      <div class="cu-title">${cu.title}</div>
+      <div class="cu-desc">${cu.desc}</div>
+      <div style="font-size:10px;color:var(--bk3);margin-bottom:6px">📐 ${cu.norm}</div>
+      <div class="cu-champs">
+        <div class="cu-ch-title">Champs clés — syntaxe à renseigner dans le format structuré</div>
+        ${cu.champs.map(ch => `<div class="cu-ch-row">
+          <div><div class="cu-bt">${ch.bt}</div></div>
+          <div>
+            <div class="cu-val"><strong>${ch.label}</strong> → <code style="background:var(--or-bg);color:var(--or-dk);padding:1px 5px;border-radius:3px;font-size:11px">${ch.val}</code></div>
+            ${ch.info ? `<div class="cu-info">${ch.info}</div>` : ''}
+          </div>
+        </div>`).join('')}
+      </div>
+    </div>`;
+  });
+  res.innerHTML = html;
+}
+</script>
+</body>
+</html>
