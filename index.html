@@ -234,7 +234,6 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
 .modal-cancel:hover{border-color:var(--bk3)}
 .cfg-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10.5px;font-weight:600;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#888;cursor:pointer;transition:all .15s}
 .cfg-badge:hover{background:rgba(255,255,255,.13);color:#ccc}
-.cfg-badge{display:none !important}
 .nav-contact{display:inline-flex;align-items:center;gap:5px;padding:8px 14px;border-radius:5px;font-family:'Inter',sans-serif;font-size:12px;font-weight:600;text-decoration:none;transition:all .15s;flex-shrink:0;white-space:nowrap}
 .nav-mail{background:var(--or);color:var(--wh)}
 .nav-mail:hover{background:var(--or-dk)}
@@ -278,7 +277,6 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
       <span class="badge b-rfe">⚡ RFE — 1ᵉʳ sept. 2026</span>
       <span class="badge b-dt" id="date-badge"></span>
       <span class="badge" style="background:rgba(66,133,244,.12);border:1px solid rgba(66,133,244,.25);color:#7BAAF7;font-size:10px">✦ Powered by Gemini</span>
-      <button class="cfg-badge" id="btn-cfg" title="Configurer la clé API Gemini">⚙ Clé API</button>
     </div>
   </div>
   <nav>
@@ -586,54 +584,26 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
 </footer>
 
 
-<!-- ══ MODAL CONFIG ══ -->
-<div class="modal-overlay hidden" id="modal-overlay">
-  <div class="modal">
-    <h3>⚙ Configuration — Clé API Gemini</h3>
-    <p>Obtenez votre clé gratuite sur <strong>aistudio.google.com/apikey</strong> (1 500 req/jour).<br>
-    Elle est stockée uniquement dans votre navigateur (localStorage) — jamais transmise ni stockée ailleurs.</p>
-    <input type="text" id="modal-key-input" placeholder="AIzaSy..." autocomplete="off" spellcheck="false">
-    <div class="modal-actions">
-      <button class="modal-cancel" id="modal-cancel">Annuler</button>
-      <button class="modal-save" id="modal-save">💾 Enregistrer</button>
-    </div>
-  </div>
-</div>
 
 <script>
 /* ═══════════════════════════════════
-   CONFIGURATION — Clé stockée dans localStorage (jamais dans le code)
-   https://aistudio.google.com/apikey  (gratuit, 1500 req/jour)
-═══════════════════════════════════ */
-const LS_KEY = 'vigilefact_gemini_key';
-function getKey(){ return localStorage.getItem(LS_KEY) || ''; }
-
-/* ═══════════════════════════════════
-   GEMINI API
+   GEMINI API — proxy via /api/gemini (clé côté serveur)
 ═══════════════════════════════════ */
 const GEMINI_MODEL = 'gemini-2.5-flash';
-const GEMINI_BASE  = 'https://generativelanguage.googleapis.com/v1beta/models';
 
 async function callGemini({ prompt, pdfBase64 = null, useSearch = false }) {
-  const key = getKey();
-  if (!key) throw new Error('Clé API non configurée — cliquez sur « ⚙ Clé API » dans l\'en-tête pour saisir votre clé Google AI Studio.');
-
   const parts = [];
-  if (pdfBase64) {
-    parts.push({ inlineData: { mimeType: 'application/pdf', data: pdfBase64 } });
-  }
+  if (pdfBase64) parts.push({ inlineData: { mimeType: 'application/pdf', data: pdfBase64 } });
   parts.push({ text: prompt });
 
-  const body = {
-    contents: [{ parts }],
-    generationConfig: { temperature: 0.1 }
-  };
+  const body = { contents: [{ parts }], generationConfig: { temperature: 0.1 } };
   if (useSearch) body.tools = [{ google_search: {} }];
 
-  const resp = await fetch(
-    `${GEMINI_BASE}/${GEMINI_MODEL}:generateContent?key=${key}`,
-    { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }
-  );
+  const resp = await fetch('/api/gemini', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ model: GEMINI_MODEL, body })
+  });
   const data = await resp.json();
   if (data.error) throw new Error(data.error.message || JSON.stringify(data.error));
   if (!data.candidates?.[0]) throw new Error('Réponse vide de Gemini');
@@ -1101,58 +1071,6 @@ IMPORTANT — réponds UNIQUEMENT avec ce JSON, sans texte ni backticks :
   }
 });
 
-/* ═══════════════════════════════════
-   MODAL CONFIG — Clé API
-═══════════════════════════════════ */
-function updateCfgBadge() {
-  const btn = document.getElementById('btn-cfg');
-  if (getKey()) {
-    btn.classList.add('key-set');
-    btn.textContent = '✓ Clé API';
-  } else {
-    btn.classList.remove('key-set');
-    btn.textContent = '⚙ Clé API';
-  }
-}
-
-document.getElementById('btn-cfg').addEventListener('click', () => {
-  document.getElementById('modal-key-input').value = getKey();
-  document.getElementById('modal-overlay').classList.remove('hidden');
-  setTimeout(() => document.getElementById('modal-key-input').focus(), 80);
-});
-
-document.getElementById('modal-cancel').addEventListener('click', () => {
-  document.getElementById('modal-overlay').classList.add('hidden');
-});
-
-document.getElementById('modal-overlay').addEventListener('click', e => {
-  if (e.target === document.getElementById('modal-overlay'))
-    document.getElementById('modal-overlay').classList.add('hidden');
-});
-
-document.getElementById('modal-save').addEventListener('click', () => {
-  const val = document.getElementById('modal-key-input').value.trim();
-  if (val) localStorage.setItem(LS_KEY, val);
-  else localStorage.removeItem(LS_KEY);
-  document.getElementById('modal-overlay').classList.add('hidden');
-  updateCfgBadge();
-});
-
-document.getElementById('modal-key-input').addEventListener('keydown', e => {
-  if (e.key === 'Enter') document.getElementById('modal-save').click();
-  if (e.key === 'Escape') document.getElementById('modal-cancel').click();
-});
-
-// Raccourci admin : Ctrl+Shift+K pour ouvrir la config clé API
-document.addEventListener('keydown', e => {
-  if (e.ctrlKey && e.shiftKey && e.key === 'K') {
-    document.getElementById('modal-key-input').value = getKey();
-    document.getElementById('modal-overlay').classList.remove('hidden');
-    setTimeout(() => document.getElementById('modal-key-input').focus(), 80);
-  }
-});
-
-updateCfgBadge();
 </script>
 </body>
 </html>
