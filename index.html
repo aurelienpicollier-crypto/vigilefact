@@ -234,6 +234,26 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
 .cfg-badge{display:inline-flex;align-items:center;gap:4px;padding:3px 10px;border-radius:100px;font-size:10.5px;font-weight:600;background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);color:#888;cursor:pointer;transition:all .15s}
 .cfg-badge:hover{background:rgba(255,255,255,.13);color:#ccc}
 .cfg-badge.key-set{border-color:rgba(30,122,74,.4);color:#68D391;background:rgba(30,122,74,.12)}
+.date-row{display:flex;align-items:center;gap:9px;margin-top:12px;flex-wrap:wrap}
+.date-row label{font-size:11.5px;color:#888;font-weight:500}
+.date-row input[type=date]{padding:5px 10px;border-radius:5px;border:1.5px solid rgba(255,107,43,.3);background:rgba(255,107,43,.07);color:#ccc;font-family:'Inter',sans-serif;font-size:12px;outline:none;cursor:pointer}
+.date-row input[type=date]:focus{border-color:var(--or)}
+.specs-card{background:var(--wh);border-radius:8px;box-shadow:var(--sh);border:1px solid var(--bd);overflow:hidden;margin-top:16px}
+.specs-head{background:var(--bk);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.specs-head h3{font-family:'Playfair Display',serif;font-size:15px;color:var(--wh);margin:0}
+.specs-head p{font-size:11px;color:#888;margin:0}
+#btn-specs{padding:8px 16px;border:1.5px solid var(--or);border-radius:5px;background:rgba(255,107,43,.1);color:var(--or);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .15s;flex-shrink:0}
+#btn-specs:hover:not(:disabled){background:rgba(255,107,43,.2)}
+#btn-specs:disabled{opacity:.5;cursor:not-allowed}
+.spec-version{padding:14px 20px;border-bottom:1px solid var(--bd)}
+.spec-version:last-child{border-bottom:none}
+.sv-meta{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.sv-badge{padding:2px 8px;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.05em;text-transform:uppercase}
+.sv-new{background:#DCFCE7;color:#166534}.sv-prev{background:#F3F4F6;color:#6B7280}
+.sv-title{font-size:13px;font-weight:600;color:var(--bk);margin-bottom:4px}
+.sv-changes{font-size:12px;color:var(--bk2);line-height:1.7}
+.sv-changes ul{margin:6px 0 0 14px}
+.sv-changes li{margin-bottom:3px}
 </style>
 </head>
 <body>
@@ -274,7 +294,11 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
       <div class="chips">
         <span class="chip">DGFiP</span><span class="chip">BOFiP</span><span class="chip">AFNOR</span>
         <span class="chip">AIFE / PPF</span><span class="chip">The Invoicing Hub</span>
-        <span class="chip">Billentis</span><span class="chip">Éditeurs PDP</span>
+        <span class="chip">Billentis</span><span class="chip">Éditeurs PA</span>
+      </div>
+      <div class="date-row">
+        <label for="date-depuis">Depuis le :</label>
+        <input type="date" id="date-depuis">
       </div>
     </div>
     <div class="radar-wrap">
@@ -285,6 +309,18 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
   <div class="card"><div id="veille-out">
     <div class="empty"><div class="empty-ico">📰</div><p>Cliquez sur « Quoi de neuf ? » pour lancer la veille.</p></div>
   </div></div>
+  <div class="specs-card">
+    <div class="specs-head">
+      <div>
+        <h3>📐 Spécifications externes DGFiP</h3>
+        <p>Suivi des versions publiées sur impots.gouv.fr/specifications-externes-b2b</p>
+      </div>
+      <button id="btn-specs">🔎 Vérifier les dernières versions</button>
+    </div>
+    <div id="specs-out">
+      <div class="empty" style="padding:24px"><p style="font-size:12px">Cliquez pour récupérer les dernières versions des spécifications externes B2B et résumer les changements.</p></div>
+    </div>
+  </div>
   <div class="disc">⚠️ Résultats issus de Google Search via Gemini. Vérifiez systématiquement auprès des sources primaires (BOFiP, légifrance.gouv.fr, impots.gouv.fr) avant tout conseil client.</div>
 </section>
 
@@ -333,7 +369,7 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
         </div>
         <div id="beyond-box" style="display:none" class="beyond-box">
           <div class="beyond-title">⚠️ Au-delà des 34 mentions : conditions de validité électronique</div>
-          <div class="beyond-item"><span class="beyond-ico">🔗</span><span><strong>Transmission via une Plateforme Agréée (PDP) ou le PPF</strong> — Dès le 1ᵉʳ sept. 2026, toute facture B2B doit transiter par une PA immatriculée ou Chorus Pro. Un PDF par email ne constituera plus une facture légale.</span></div>
+          <div class="beyond-item"><span class="beyond-ico">🔗</span><span><strong>Transmission via une Plateforme Agréée (PA) ou le PPF</strong> — Dès le 1ᵉʳ sept. 2026, toute facture B2B doit transiter par une PA immatriculée ou Chorus Pro. Un PDF par email ne constituera plus une facture légale.</span></div>
           <div class="beyond-item"><span class="beyond-ico">📐</span><span><strong>Format structuré obligatoire</strong> — <strong>Factur-X, UBL 2.1 ou CII D22B</strong> (XP Z12-012, profil EN 16931 minimum). Un PDF non structuré est invalide pour la transmission e-invoicing.</span></div>
           <div class="beyond-item"><span class="beyond-ico">📍</span><span><strong>Adresse de routage électronique (BT-49 / BT-34)</strong> — Format <code>0225:SIREN</code>, inscrite dans l'Annuaire PPF. Sans cette donnée, la PA ne peut pas router la facture.</span></div>
           <div class="beyond-item"><span class="beyond-ico">🔄</span><span><strong>Statuts de cycle de vie obligatoires</strong> — Quatre statuts transmis au Concentrateur PPF : <em>Déposée, Rejetée, Refusée</em> (PA) et <em>Encaissée</em> (vendeur si TVA à l'encaissement). Nécessaires au pré-remplissage TVA DGFiP.</span></div>
@@ -344,7 +380,7 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
         </div>
       </div>
       <div class="bench-bar">
-        <a class="bench-pill" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener">📊 Comparer les PDP</a>
+        <a class="bench-pill" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener">📊 Comparer les PA</a>
         <a class="bench-pill" href="https://www.impots.gouv.fr/professionnel/la-facturation-electronique-entre-entreprises" target="_blank" rel="noopener">🏛️ Liste officielle DGFiP</a>
       </div>
     </div>
@@ -455,7 +491,7 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
       <div class="tl-body">
         <div class="tl-date">1ᵉʳ septembre 2026 — <strong>Entrée en vigueur</strong></div>
         <ul class="tl-ul">
-          <li>Toutes les entreprises assujetties à la TVA : obligation de <strong>recevoir</strong> des factures électroniques via une PDP ou le PPF <span class="otag o-rx">Réception ×tous</span></li>
+          <li>Toutes les entreprises assujetties à la TVA : obligation de <strong>recevoir</strong> des factures électroniques via une PA ou le PPF <span class="otag o-rx">Réception ×tous</span></li>
           <li><strong>Émission</strong> obligatoire pour les <strong>grandes entreprises (GE)</strong> — effectif ≥5 000 ou CA ≥1,5Md€ <span class="otag o-tx">Émission GE</span></li>
           <li><strong>Émission</strong> obligatoire pour les <strong>ETI</strong> — 250 à 4 999 salariés, CA 50M€–1,5Md€ <span class="otag o-tx">Émission ETI</span></li>
           <li>Début du <strong>e-reporting</strong> pour les transactions B2C et flux internationaux (GE &amp; ETI) <span class="otag o-er">E-reporting</span></li>
@@ -481,7 +517,7 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
         <div class="tl-date">Horizon 2028 — Consolidation &amp; ViDA</div>
         <ul class="tl-ul">
           <li>Bilan réglementaire — ajustements éventuels du cahier des charges DGFiP</li>
-          <li>Consolidation du marché PDP — probable vague de re-sélection</li>
+          <li>Consolidation du marché PA — probable vague de re-sélection</li>
           <li>Alignement progressif avec la directive <strong>ViDA</strong> en cours de transposition</li>
         </ul>
       </div>
@@ -509,9 +545,9 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
     <p class="s-desc">Références pour choisir sa Plateforme Agréée et suivre la réforme.</p>
   </div>
   <div class="r-grid">
-    <a class="r-card" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener"><p class="r-aud" style="color:#1a56db">🏢 Chefs d'entreprise — Choisir sa PDP</p><h3 class="r-title">Grand Benchmark des Plateformes Agréées</h3><p class="r-desc">Comparatif des PDP immatriculées DGFiP. Critères fonctionnels, techniques et tarifaires. The Invoicing Hub — 3ᵉ éd., avril 2026.</p><p class="r-arr">→ theinvoicinghub.com</p></a>
-    <a class="r-card" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--ok)">📊 Experts-comptables — Vue cabinet</p><h3 class="r-title">Benchmark PDP — Intégration cabinet</h3><p class="r-desc">Analyse sous l'angle cabinet : connecteurs ACD / EBP / Sage / Pennylane, APIs, workflows multi-clients. The Invoicing Hub, 2026.</p><p class="r-arr">→ theinvoicinghub.com</p></a>
-    <a class="r-card" href="https://www.impots.gouv.fr/professionnel/la-facturation-electronique-entre-entreprises" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--ko)">🏛️ Source officielle</p><h3 class="r-title">DGFiP — Portail facturation électronique</h3><p class="r-desc">Cahier des charges, FAQ, liste des PDP immatriculées, spécifications techniques et actualités officielles.</p><p class="r-arr">→ impots.gouv.fr</p></a>
+    <a class="r-card" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener"><p class="r-aud" style="color:#1a56db">🏢 Chefs d'entreprise — Choisir sa PA</p><h3 class="r-title">Grand Benchmark des Plateformes Agréées</h3><p class="r-desc">Comparatif des PA immatriculées DGFiP. Critères fonctionnels, techniques et tarifaires. The Invoicing Hub — 3ᵉ éd., avril 2026.</p><p class="r-arr">→ theinvoicinghub.com</p></a>
+    <a class="r-card" href="https://www.theinvoicinghub.com/grand-benchmark-des-plateformes-agreees/" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--ok)">📊 Experts-comptables — Vue cabinet</p><h3 class="r-title">Benchmark PA — Intégration cabinet</h3><p class="r-desc">Analyse sous l'angle cabinet : connecteurs ACD / EBP / Sage / Pennylane, APIs, workflows multi-clients. The Invoicing Hub, 2026.</p><p class="r-arr">→ theinvoicinghub.com</p></a>
+    <a class="r-card" href="https://www.impots.gouv.fr/professionnel/la-facturation-electronique-entre-entreprises" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--ko)">🏛️ Source officielle</p><h3 class="r-title">DGFiP — Portail facturation électronique</h3><p class="r-desc">Cahier des charges, FAQ, liste des PA immatriculées, spécifications techniques et actualités officielles.</p><p class="r-arr">→ impots.gouv.fr</p></a>
     <a class="r-card" href="https://www.afnor.org" target="_blank" rel="noopener"><p class="r-aud" style="color:#6b21a8">📐 Normalisation</p><h3 class="r-title">AFNOR — Normes XP Z12-012 / 013 / 014</h3><p class="r-desc">Formats Factur-X et cas d'usage par profil (MINIMUM, BASIC WL, EN 16931, EXTENDED-CTC-FR). Version 1.3 — fév. 2026.</p><p class="r-arr">→ afnor.org</p></a>
     <a class="r-card" href="https://www.chorus-pro.gouv.fr" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--wa)">⚙️ PPF / Chorus Pro</p><h3 class="r-title">AIFE — Portail Public de Facturation</h3><p class="r-desc">PPF géré par l'AIFE : dépôt, consultation, Annuaire des entreprises, documentation technique.</p><p class="r-arr">→ chorus-pro.gouv.fr</p></a>
     <a class="r-card" href="https://www.billentis.com" target="_blank" rel="noopener"><p class="r-aud" style="color:var(--bk3)">🌍 Veille internationale</p><h3 class="r-title">Billentis — Global E-Invoicing Report 2025</h3><p class="r-desc">Benchmark mondial, tendances CTC et ViDA. Rapport 2025 : « Watch Out for the Tornado ».</p><p class="r-arr">→ billentis.com</p></a>
@@ -519,10 +555,10 @@ footer{text-align:center;padding:20px;font-size:10.5px;color:var(--bk3);border-t
   <div class="contact-box">
     <div class="ct-left">
       <h3>Besoin d'un accompagnement ?</h3>
-      <p>Altae accompagne les PME &amp; cabinets dans leur transformation digitale — stratégie RFE, choix de PDP, mise en conformité et pilotage de projet.</p>
+      <p>Altae accompagne les PME &amp; cabinets dans leur transformation digitale — stratégie RFE, choix de PA, mise en conformité et pilotage de projet.</p>
       <div class="ct-tags">
         <span class="ct-tag">Facturation électronique</span><span class="ct-tag">BTP multi-activités</span>
-        <span class="ct-tag">Choix de PDP</span><span class="ct-tag">Transformation digitale</span>
+        <span class="ct-tag">Choix de PA</span><span class="ct-tag">Transformation digitale</span>
       </div>
     </div>
     <div class="ct-right">
@@ -594,9 +630,16 @@ async function callGemini({ prompt, pdfBase64 = null, useSearch = false }) {
 }
 
 function parseJSON(text) {
-  const m = text.replace(/```json|```/g, '').match(/\{[\s\S]*\}/);
-  if (!m) throw new Error('Pas de JSON dans la réponse');
-  return JSON.parse(m[0]);
+  const clean = text.replace(/```json|```/g, '').trim();
+  // Essai 1 : parse direct
+  try { return JSON.parse(clean); } catch {}
+  // Essai 2 : extraire le premier objet JSON complet
+  let depth = 0, start = -1;
+  for (let i = 0; i < clean.length; i++) {
+    if (clean[i] === '{') { if (start < 0) start = i; depth++; }
+    else if (clean[i] === '}') { depth--; if (depth === 0 && start >= 0) { try { return JSON.parse(clean.slice(start, i + 1)); } catch {} } }
+  }
+  throw new Error('Impossible de lire la réponse JSON de Gemini');
 }
 
 /* ═══════════════════════════════════
@@ -604,6 +647,10 @@ function parseJSON(text) {
 ═══════════════════════════════════ */
 document.getElementById('date-badge').textContent =
   new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+
+// Date par défaut : 30 jours en arrière
+const d30 = new Date(); d30.setDate(d30.getDate() - 30);
+document.getElementById('date-depuis').value = d30.toISOString().slice(0, 10);
 
 document.querySelectorAll('.tab').forEach(b => {
   b.addEventListener('click', () => {
@@ -621,29 +668,36 @@ document.getElementById('btn-veille').addEventListener('click', async () => {
   const btn = document.getElementById('btn-veille');
   const out  = document.getElementById('veille-out');
   btn.disabled = true; btn.classList.add('scanning');
-  out.innerHTML = '<div class="loading-row"><div class="spinner"></div>Recherche Google en cours — DGFiP, AFNOR, AIFE, The Invoicing Hub, Billentis, éditeurs PDP…</div>';
+  out.innerHTML = '<div class="loading-row"><div class="spinner"></div>Recherche Google en cours — DGFiP, AFNOR, AIFE, The Invoicing Hub, Billentis, éditeurs PA…</div>';
 
   const today = new Date().toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' });
+  const dateDepuis = document.getElementById('date-depuis').value;
+  const dateDepuisFr = dateDepuis
+    ? new Date(dateDepuis).toLocaleDateString('fr-FR', { day:'numeric', month:'long', year:'numeric' })
+    : '1er janvier 2025';
 
   try {
-    const prompt = `Tu es un expert en facturation électronique française. Effectue une recherche Google sur les actualités récentes (2025-2026) concernant la réforme de la facturation électronique en France (RFE, e-invoicing).
+    const prompt = `Tu es un expert en facturation électronique française. Effectue une recherche Google sur les actualités publiées DEPUIS LE ${dateDepuisFr} concernant la réforme de la facturation électronique en France (RFE, e-invoicing). Ne retourne PAS de nouvelles antérieures à cette date.
 
 Recherche les nouvelles provenant de :
-- DGFiP (impots.gouv.fr) : nouvelles règles, mise à jour du cahier des charges, nouvelles PDP immatriculées ou retirées
+- DGFiP (impots.gouv.fr) : nouvelles règles, mise à jour du cahier des charges, nouvelles PA immatriculées ou retirées
 - BOFiP : nouvelles instructions fiscales (articles 289 bis, 290 CGI)
 - AFNOR : évolutions normes XP Z12-012, Z12-013, Z12-014 (Factur-X)
 - AIFE / Chorus Pro : actualités PPF
 - The Invoicing Hub : publications, benchmarks, analyses
 - Billentis : rapports et veille internationale
-- Éditeurs PDP : nouvelles immatriculations, fonctionnalités
+- Éditeurs PA : nouvelles immatriculations, fonctionnalités
 
-Réponds UNIQUEMENT avec ce JSON (sans backticks ni markdown) :
+IMPORTANT : Réponds UNIQUEMENT avec le JSON ci-dessous, sans aucun texte avant ou après, sans backticks, sans markdown :
 {"lastUpdated":"${today}","summary":"synthèse factuelle en une phrase","items":[{"source":"NOM","color":"#HEX","date":"période","title":"titre court précis","summary":"résumé factuel 2-3 phrases"}]}`;
 
     const text = await callGemini({ prompt, useSearch: true });
     let p;
     try { p = parseJSON(text); }
-    catch { out.innerHTML = `<div class="c-body" style="padding:16px;font-size:13px;line-height:1.7;color:var(--bk2)">${text.replace(/\n/g,'<br>')}</div>`; return; }
+    catch {
+      out.innerHTML = `<div class="err-box">⚠️ La réponse n'a pas pu être analysée. Réessayez ou vérifiez votre clé API.</div>`;
+      return;
+    }
 
     document.getElementById('last-chk').textContent = 'Dernière vérification : ' + today;
     let html = '';
@@ -959,6 +1013,63 @@ function generateResults() {
   });
   res.innerHTML = html;
 }
+
+/* ═══════════════════════════════════
+   SPÉCIFICATIONS EXTERNES DGFiP
+═══════════════════════════════════ */
+document.getElementById('btn-specs').addEventListener('click', async () => {
+  const btn = document.getElementById('btn-specs');
+  const out  = document.getElementById('specs-out');
+  btn.disabled = true;
+  out.innerHTML = '<div class="loading-row"><div class="spinner"></div>Recherche des dernières spécifications sur impots.gouv.fr…</div>';
+
+  try {
+    const prompt = `Tu es un expert en facturation électronique française. Recherche les dernières versions des spécifications externes B2B publiées par la DGFiP sur impots.gouv.fr/specifications-externes-b2b.
+
+Pour chaque document de spécification trouvé (cahier des charges, spécifications B2B, B2G, etc.) :
+- Indique la version actuelle et sa date de publication
+- Indique la version précédente si connue
+- Résume les principaux changements apportés par la version actuelle (3-5 points clés)
+- Indique si la version est stable ou en consultation publique
+
+IMPORTANT : Réponds UNIQUEMENT avec le JSON ci-dessous, sans aucun texte avant ou après, sans backticks :
+{"lastUpdated":"DATE_AUJOURD_HUI","docs":[{"title":"Nom du document","version":"vX.X","date":"date publication","prevVersion":"vX.X précédente ou null","status":"stable|consultation","changes":["changement 1","changement 2","changement 3"]}]}`;
+
+    const text = await callGemini({ prompt, useSearch: true });
+    let p;
+    try { p = parseJSON(text); }
+    catch {
+      out.innerHTML = `<div class="err-box">⚠️ Impossible de lire la réponse. Réessayez.</div>`;
+      return;
+    }
+
+    if (!p.docs?.length) {
+      out.innerHTML = '<div class="empty" style="padding:24px"><p>Aucune spécification trouvée.</p></div>';
+      return;
+    }
+
+    let html = '';
+    p.docs.forEach((doc, i) => {
+      const isNew = i === 0;
+      html += `<div class="spec-version">
+        <div class="sv-meta">
+          <span class="sv-badge ${isNew ? 'sv-new' : 'sv-prev'}">${doc.version}</span>
+          <span class="n-date">${doc.date}</span>
+          ${doc.prevVersion ? `<span style="font-size:10.5px;color:var(--bk3)">← remplace ${doc.prevVersion}</span>` : ''}
+          ${doc.status === 'consultation' ? `<span class="sv-badge" style="background:#FEF9C3;color:#854D0E">Consultation</span>` : ''}
+        </div>
+        <div class="sv-title">${doc.title}</div>
+        <div class="sv-changes"><ul>${(doc.changes||[]).map(c=>`<li>${c}</li>`).join('')}</ul></div>
+      </div>`;
+    });
+    out.innerHTML = html;
+
+  } catch(e) {
+    out.innerHTML = `<div class="err-box">⚠️ ${e.message}</div>`;
+  } finally {
+    btn.disabled = false;
+  }
+});
 
 /* ═══════════════════════════════════
    MODAL CONFIG — Clé API
